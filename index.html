@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Horion</title>
     <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -428,13 +428,14 @@
 
     <div id="announcement-modal-overlay" class="announcement-modal-overlay" aria-hidden="true">
         <div class="announcement-modal" role="dialog" aria-modal="true" aria-labelledby="announcement-modal-title">
-            <h3 id="announcement-modal-title">End of Year Announcment</h3>
-            <div id="announcement-modal-copy" class="announcement-modal-copy">With the school year coming to a close, I want to say thank you to everyone across all schools who used Horion.
-                I will remain to work solo on Horion, but I will be taking a step back from the project. Don't worry, Horion will still recieve big fixes, new games, and updates, just maybe not as much.
-                Over the summer, I will work on one or two bigger updates for Horion before the 26-27 school year. I have plans, but for now expect more web games and major backend updates, along with a mass switch from database featured games to using much more stable web versions.
-                I am also working on other projects, such as more independent games and some will be ready by the end of the summer.    
-            For any requests, feel free to email me at cmakesgames@gmail.com.
-            This is CMG announcing a wrap for the 25-26 school year. Thank you all again for the support, and I hope you have a great summer!
+            <h3 id="announcement-modal-title">Welcome Back...</h3>
+            <div id="announcement-modal-copy" class="announcement-modal-copy">This is gonna be the best school year yet because Horion exists!
+I have been making updates... check in recent updates.
+I'll keep it short this time around, but I added a testing server link so I can live-test new updates, and removed the bug-report form. 
+Instead, join the discord if you can, theres a bug-report, announcments, and gambling. Link is in the page's footer.
+Just keep expecting new updates and versions. Horion is going to grow even more this year.
+    Thanks for using,
+    -CrosMakesGames
             </div>
             <div class="announcement-modal-actions">
                 <button id="announcement-modal-continue" class="announcement-continue" type="button">Continue</button>
@@ -1743,10 +1744,12 @@ canvas {
         </div>
 
         <div class="recent-changes-container">
-            <div class="recent-label">RECENT CHANGES: 2.4.1</div>
+            <div class="recent-label">TESTING #1</div>
             <div class="change-log">
-                > Updated the doc so actually can't get blocked, but might be kinda complex<br>
-                > Bug fixes
+                > Live testing = live updates. So far i have...<br>
+                > Loads of bug fixes <br>
+                > Overall polishing/outside of Horion stuff<br>
+                > Added minimizing the navbar
             </div>
         </div>
     </div>
@@ -1842,11 +1845,11 @@ canvas {
     <div class="info-grid">
         <div class="info-card">
             <span class="card-label">CURRENT BUILD</span>
-            <span class="card-value">v2.4.1</span>
+            <span class="card-value">TEST #1</span>
         </div>
         <div class="info-card">
             <span class="card-label">BRANCH</span>
-            <span id="selected-server-value" class="card-value">MAIN BRANCH</span>
+            <span id="selected-server-value" class="card-value">TESTING BRANCH</span>
         </div>
         <div class="info-card">
             <span class="card-label">DATABASE ENTRIES</span>
@@ -1854,7 +1857,7 @@ canvas {
         </div>
         <div class="info-card">
             <span class="card-label">LAST UPDATE</span>
-            <span class="card-value">2026.4.29</span>
+            <span class="card-value">2026.6.2</span>
         </div>
     </div>
 
@@ -1875,7 +1878,7 @@ canvas {
         </div>
         </p><br><br>
         <a href="https://bit.ly/horiongames" target="_blank" class="credit-link">> Links Document</a>
-        <a href="https://crosmakesgames.github.io/horionexp/" target="_blank" rel="noopener noreferrer" class="credit-link">> Testing Server</a>
+        <a href="https://crosmakesgames.github.io/horion/" target="_blank" rel="noopener noreferrer" class="credit-link">> Main Branch</a>
     </div>
 </div>
 </div>
@@ -1886,8 +1889,11 @@ canvas {
             <img src="./cmg.png" alt="CMG" class="site-footer-logo">
         </div>
         <div class="site-footer-links">
-            <a href="https://www.youtube.com/channel/UC19axu6m6KscPGbNxfUm3Dg" target="_blank" rel="noopener noreferrer">YouTube</a>
-            <a href="https://www.tiktok.com/@horiongames" target="_blank" rel="noopener noreferrer">TikTok</a>
+            <a href="#" target="_blank" rel="noopener noreferrer">YouTube</a>
+            <a href="#" target="_blank" rel="noopener noreferrer">TikTok</a>
+            <a href="https://discord.gg/5dTP5SbafH" target="_blank" rel="noopener noreferrer">Discord</a> 
+            | 
+            <a href="https://crosmakesgames.github.io" target="_blank" rel="noopener noreferrer">crosmakesgames.github.io</a>
         </div>
     </div>
 </footer>
@@ -1968,10 +1974,10 @@ canvas {
     });
 
         const featuredGames = [
-    { filename: 'westernroulette.html', displayname: 'Western Roulette', desc: 'Western Roulette is a cowboy dueling game made by CMG built around fast reactions and high-stakes timing.', image: 'https://static.vecteezy.com/system/resources/previews/050/005/195/non_2x/pixelated-cowboy-roulette-pistol-vector.jpg', type: 'special', recommended: ['Gun Blood', '10 Bullets', 'Gun Spin'] },
-    { filename: 'https://cmakesg.neocities.org/intothedeep', displayname: 'Into The Deep', desc: 'Into The Deep was the first game made by CMG and is very fun extraction game.', image: 'https://i.pinimg.com/originals/39/af/84/39af8424bb91a3b0a6ec1977ed95e1bb.png', type: 'special', recommended: ['Dud', 'Gun Knight', 'Die In The Dungeon'] },
-{ filename: 'https://songl.io/', displayname: 'Songl.io', desc: 'Songl.io is a multiplayer rhythm game where you listen to clips of songs and guess.', image: 'https://ph-files.imgix.net/10ae9632-5e22-407a-a123-b917b4f20b5d.jpeg?auto=compress&codec=mozjpeg&cs=strip&auto=format&w=64&h=64&fit=crop&frame=1&dpr=2', type: 'special', recommended: ['Gartic Phone', 'skribbl.io', 'Secret Hitler'] },
-{ filename: 'https://wiki-race.com/', displayname: 'Wiki Race', desc: 'Wiki Race is a browser challenge where you jump between Wikipedia articles as fast as possible to reach a target page.', image: 'https://play-lh.googleusercontent.com/7z_Ju9hgBJuqk4Xhm_HyLhtRTMmuwvfvp4SFvAZcJzwQEoL3KQYME0FKu518CxEt9Fo1Cf52eNVpsxkeCoWvkg', type: 'special', recommended: ['OpenGuessr', 'skribbl.io', '2048'] },
+    { filename: 'westernroulette.html', displayname: 'Western Roulette', desc: 'Western Roulette is a cowboy dueling game made by CMG built around fast reactions and high-stakes timing.', image: 'https://static.vecteezy.com/system/resources/previews/050/005/195/non_2x/pixelated-cowboy-roulette-pistol-vector.jpg', type: 'web', recommended: ['Gun Blood', '10 Bullets', 'Gun Spin'] },
+    { filename: 'https://cmakesg.neocities.org/intothedeep', displayname: 'Into The Deep', desc: 'Into The Deep was the first game made by CMG and is very fun extraction game.', image: 'https://i.pinimg.com/originals/39/af/84/39af8424bb91a3b0a6ec1977ed95e1bb.png', type: 'web', recommended: ['Dud', 'Gun Knight', 'Die In The Dungeon'] },
+{ filename: 'https://songl.io/', displayname: 'Songl.io', desc: 'Songl.io is a multiplayer rhythm game where you listen to clips of songs and guess.', image: 'https://ph-files.imgix.net/10ae9632-5e22-407a-a123-b917b4f20b5d.jpeg?auto=compress&codec=mozjpeg&cs=strip&auto=format&w=64&h=64&fit=crop&frame=1&dpr=2', type: 'web', recommended: ['Gartic Phone', 'skribbl.io', 'Secret Hitler'] },
+{ filename: 'https://wiki-race.com/', displayname: 'Wiki Race', desc: 'Wiki Race is a browser challenge where you jump between Wikipedia articles as fast as possible to reach a target page.', image: 'https://play-lh.googleusercontent.com/7z_Ju9hgBJuqk4Xhm_HyLhtRTMmuwvfvp4SFvAZcJzwQEoL3KQYME0FKu518CxEt9Fo1Cf52eNVpsxkeCoWvkg', type: 'web', recommended: ['OpenGuessr', 'skribbl.io', '2048'] },
 
   { filename: 'clfnafucn', displayname: 'FNAF: UCN', desc: 'Ultimate Custom Night is a Five Nights at Freddy’s survival challenge where you manage dozens of animatronics at once.', image: 'https://play-lh.googleusercontent.com/pB7dsLLcRgADtFpEPeKc5mSyAn1E1JzrdQ1V7-Y5hizgub3G8e9UJIc5opC9mYXKSBw=w240-h480-rw', recommended: ['Fnaf 2', 'Fnaf 3', 'Fnaf 4'] },
 
@@ -1999,7 +2005,7 @@ canvas {
 
   { filename: 'cljetpackjoyride', displayname: 'Jetpack Joyride', desc: 'Jetpack Joyride is an endless runner where you fly through obstacles with a gadget-powered jetpack.', image: 'https://upload.wikimedia.org/wikipedia/en/9/90/Jetpack_Joyride_iOS.png', recommended: ['Subway Surfers', 'Crossy Road', 'Snow Rider'] },
 
-  { filename: 'https://mc0825.github.io/g20/class-402', displayname: 'Crossy Road', desc: 'Crossy Road is a timing-based arcade game where you cross roads, rivers, and trains without dying.', image: 'https://upload.wikimedia.org/wikipedia/en/7/71/Crossy_Road_icon.jpeg', recommended: ['Subway Surfers', 'Jetpack Joyride', 'Run 3'], type: 'special' },
+  { filename: 'https://mc0825.github.io/g20/class-402', displayname: 'Crossy Road', desc: 'Crossy Road is a timing-based arcade game where you cross roads, rivers, and trains without dying.', image: 'https://upload.wikimedia.org/wikipedia/en/7/71/Crossy_Road_icon.jpeg', recommended: ['Subway Surfers', 'Jetpack Joyride', 'Run 3'], type: 'web' },
 
     { filename: 'clragdollarchers', displayname: 'Ragdoll Archer', desc: 'Ragdoll Archer is a physics-based bow duel game where you fight using angled shots and timing.', image: 'https://imgs.crazygames.com/ragdoll-archers_1x1/20250926080758/ragdoll-archers_1x1-cover?format=auto&quality=70&metadata=none', recommended: ['10 Bullets', 'Gun Blood', 'Gun Spin'] },
 
@@ -2013,17 +2019,17 @@ canvas {
 
     { filename: 'clgunblood', displayname: 'Gun Blood', desc: 'Gun Blood is a Western quick-draw dueling game focused on reaction speed.', image: 'https://pizzaedition.win/images/games/gunblood-min.jpeg', recommended: ['Western Roulette', '10 Bullets', 'Gun Spin'] },
 
-  { filename: 'https://polytrackonline.gitlab.io/poly-track/', displayname: 'Polytrack', desc: 'Polytrack is a low-poly racing game focused on time trials and track building.', image: 'https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/3fa3556b61d02fba189999605b1f304b/polytrack.png', recommended: ['Drive Mad', 'Drift Boss', 'Highway Racer'], type: 'special' },
+  { filename: 'https://polytrackonline.gitlab.io/poly-track/', displayname: 'Polytrack', desc: 'Polytrack is a low-poly racing game focused on time trials and track building.', image: 'https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/3fa3556b61d02fba189999605b1f304b/polytrack.png', recommended: ['Drive Mad', 'Drift Boss', 'Highway Racer'], type: 'web' },
 
-  { filename: 'https://lnahtml.github.io/a77/drive-mad/', displayname: 'Drive Mad', desc: 'Drive Mad is a physics driving puzzle game where balancing control is the main challenge.', image: 'https://cdn-1.webcatalog.io/catalog/poki-drive-mad/poki-drive-mad-icon-filled-256.png?v=1714778298617', recommended: ['Polytrack', 'Cluster Rush', 'Snow Rider'], type: 'special' },
+  { filename: 'https://lnahtml.github.io/a77/drive-mad/', displayname: 'Drive Mad', desc: 'Drive Mad is a physics driving puzzle game where balancing control is the main challenge.', image: 'https://cdn-1.webcatalog.io/catalog/poki-drive-mad/poki-drive-mad-icon-filled-256.png?v=1714778298617', recommended: ['Polytrack', 'Cluster Rush', 'Snow Rider'], type: 'web' },
 
   { filename: 'clclusterrush', displayname: 'Cluster Rush', desc: 'Cluster Rush is a parkour platformer where you jump across moving trucks at high speed.', image: 'https://static.gameloop.com/img/2d7993dd07da134d0c85e6012105b363.png?imageMogr2/thumbnail/172.8x172.8/format/webp', recommended: ['Run 3', 'Slope +', 'Tunnel Rush'] },
 
-  { filename: 'clsnowrider', displayname: 'Snow Rider', desc: 'Snow Rider is a downhill sledding game where you dodge obstacles and go for distance.', image: 'https://geometrydashfullversion.io/cache/data/image/game/snow-rider-3d/snow-rider-3d-m200x200.webp', recommended: ['Crossy Road', 'Subway Surfers', 'Drive Mad'] },
+  { filename: 'https://snowrider.com/game/', displayname: 'Snow Rider', desc: 'Snow Rider is a downhill sledding game where you dodge obstacles and go for distance.', image: 'https://snowrider3dsanta.io/data/image/game/snow-rider-3d.jpg', recommended: ['Crossy Road', 'Subway Surfers', 'Drive Mad'], type: 'webnosandbox' },
 
   { filename: 'cldriftboss', displayname: 'Drift Boss', desc: 'Drift Boss is a one-button drifting game focused on timing turns on narrow tracks.', image: 'https://play-lh.googleusercontent.com/Zu0LoruCtIG45qs6iffZkWqGTuzEWflNoH8TNRtfMJ2NGgJxQGfw8kqSrxKtXGjPqeqFLNsnubW6EnPUJvOi8g=w240-h480-rw', recommended: ['Drive Mad', 'Polytrack', 'Highway Racer'] },
 
-  { filename: 'https://embed.stacktris.net/stacktris/', displayname: 'Stacktris', desc: 'Stacktris is a physics-based stacking puzzle inspired by Tetris with unstable block placement.', image: 'https://pizzaedition.win/images/games/stacktris-min.png', recommended: ['Tetris', '2048', 'Shapez.io'], type: 'special' },
+  { filename: 'https://embed.stacktris.net/stacktris/', displayname: 'Stacktris', desc: 'Stacktris is a physics-based stacking puzzle inspired by Tetris with unstable block placement.', image: 'https://pizzaedition.win/images/games/stacktris-min.png', recommended: ['Tetris', '2048', 'Shapez.io'], type: 'web' },
 
   { filename: 'clFNAF', displayname: 'FNAF', desc: 'Five Nights at Freddy’s is a survival horror game where you monitor animatronics through cameras.', image: 'https://pizzaedition.win/images/games/fnaf-min.jpg', recommended: ['Fnaf 2', 'Fnaf 3', 'Fnaf 4'] },
 
@@ -2033,11 +2039,11 @@ canvas {
 
   { filename: 'clFNAF4', displayname: 'Fnaf 4', desc: 'FNAF 4 is a horror game focused on listening and reacting to threats in a bedroom setting.', image: 'https://pizzaedition.win/images/games/fnaf4-min.png', recommended: ['FNAF', 'Fnaf 2', 'Fnaf 3'] },
 
-  { filename: 'https://svaaps.github.io/eaglercrafthtml/', displayname: 'Minecraft 1.9', desc: 'Minecraft 1.9 is a sandbox survival game focused on building, exploration, and combat updates.', image: 'https://media.sketchfab.com/models/84938a8f3f8d4a0aa64aaa9c4e4d27d3/thumbnails/f5d49a3c2cdb4424b7f062d340d2a4a7/aafef2fcd26b40f5bea48725065c6542.jpeg', type: 'special', recommended: ['Sandboxels', 'Shapez.io', 'Space Company'] },
+  { filename: 'https://svaaps.github.io/eaglercrafthtml/', displayname: 'Minecraft 1.9', desc: 'Minecraft 1.9 is a sandbox survival game focused on building, exploration, and combat updates.', image: 'https://media.sketchfab.com/models/84938a8f3f8d4a0aa64aaa9c4e4d27d3/thumbnails/f5d49a3c2cdb4424b7f062d340d2a4a7/aafef2fcd26b40f5bea48725065c6542.jpeg', type: 'web', recommended: ['Sandboxels', 'Shapez.io', 'Space Company'] },
 
   { filename: 'clsubwaysurfersbarcelona', displayname: 'Subway Surfers: Barcelona', desc: 'Subway Surfers is an endless runner where you dodge trains and collect coins while escaping.', image: 'https://vodogame.com/games/subway-surf-barcelona/thumb_1.jpg', recommended: ['Crossy Road', 'Jetpack Joyride', 'Snow Rider'] },
 
-  { filename: 'https://nzp.gay', displayname: 'Nazi Zombies', desc: 'Nazi Zombies is a wave-based survival shooter focused on defending against zombie rounds.', image: 'https://avatars.githubusercontent.com/u/91418801?s=280&v=4', type: 'special', recommended: ['Krunker', 'ev.io', 'Gun Knight'] },
+  { filename: 'https://nzp.gay', displayname: 'Nazi Zombies', desc: 'Nazi Zombies is a wave-based survival shooter focused on defending against zombie rounds.', image: 'https://avatars.githubusercontent.com/u/91418801?s=280&v=4', type: 'web', recommended: ['Krunker', 'ev.io', 'Gun Knight'] },
 
   { filename: 'clducklife3', displayname: 'Duck Life 3', desc: 'Duck Life 3 is a training-based adventure game where you raise a duck to compete in races.', image: 'https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/f5671816-e95b-4d41-adb7-411708f431ba/ducklife-3.png', recommended: ['Bitlife', 'Cookie Clicker', 'Space Company'] },
 
@@ -2073,57 +2079,57 @@ canvas {
 
   { filename: 'cldud', displayname: "Dud", desc: 'Dud is a simple indie arcade-style game focused on short experimental gameplay.', image: 'https://img.itch.zone/aW1nLzEzNzE4MzQzLnBuZw==/original/KLbZPd.png', recommended: ['Stacktris', 'Sandboxels', 'Ink Game'] },
 
-  { filename: 'https://8-ball-pool-html-5.vercel.app', displayname: "8 Ball: Classic", desc: '8 Ball Pool is a billiards game focused on aiming, angles, and competitive matches.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh6rcox2LJIE1FGsChgBipA0Dv_CFxbKu-yw&s', type: 'special', recommended: ['Drift Boss', 'Highway Racer', 'Polytrack'] },
+  { filename: 'https://8-ball-pool-html-5.vercel.app', displayname: "8 Ball: Classic", desc: '8 Ball Pool is a billiards game focused on aiming, angles, and competitive matches.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh6rcox2LJIE1FGsChgBipA0Dv_CFxbKu-yw&s', type: 'web', recommended: ['Drift Boss', 'Highway Racer', 'Polytrack'] },
 
     { filename: 'clburritobisonlaunchalibre', displayname: "Burrito Bison: Launcha Libre", desc: 'Burrito Bison is a launch-based arcade game where you fling a wrestler to cause destruction.', image: 'https://play-lh.googleusercontent.com/vpTgm9u7-GzZP_MceTWpDi0HbinXd_4phCoTwf4ZspFL-115FtNRdo_SU1p-khLDnLA', recommended: ['Gun Spin', '10 Bullets', 'Western Roulette'] },
 
     { filename: 'clgun-spin', displayname: "Gun Spin", desc: 'Gun Spin is a physics shooter where recoil is used to propel movement and progress.', image: 'https://images.dwncdn.net/images/t_app-icon-l/p/39d0a468-21ab-466d-a65b-5585c02dd7ad/15864794/gunspin-logo', recommended: ['10 Bullets', 'Gun Blood', 'Western Roulette'] },
 
-  { filename: 'https://nerd.com', displayname: "Nerd.com Videos", desc: 'Nerd.com Videos is a web-based entertainment hub with quick-access video content.', image: 'https://www.nerd.com/img/nerd/pwa-512x512.png', type: 'special', recommended: ['Skribbl.io', 'Gartic Phone', 'Ink Game'] },
+  { filename: 'https://nerd.com', displayname: "Nerd.com Videos", desc: 'Nerd.com Videos is a web-based entertainment hub with quick-access video content.', image: 'https://www.nerd.com/img/nerd/pwa-512x512.png', type: 'web', recommended: ['Skribbl.io', 'Gartic Phone', 'Ink Game'] },
 
     { filename: 'clbrotato', displayname: 'Brotato', desc: 'Brotato is a top-down arena roguelite where you survive enemy waves by stacking fast weapon builds.', image: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1942280/header.jpg', recommended: ['Balatro', 'Die In The Dungeon', 'Dungeon Deck'] },
 
-  { filename: 'https://mehmetmhy.github.io/tetris/', displayname: "Tetris", desc: 'Tetris is a classic puzzle game where you arrange falling blocks to clear lines.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSJVXUjr9K0zjk9F96LagL6iTk_hu4_yNLkQ&s', type: 'special', recommended: ['2048', 'Stacktris', 'Shapez.io'] },
+  { filename: 'https://mehmetmhy.github.io/tetris/', displayname: "Tetris", desc: 'Tetris is a classic puzzle game where you arrange falling blocks to clear lines.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSJVXUjr9K0zjk9F96LagL6iTk_hu4_yNLkQ&s', type: 'web', recommended: ['2048', 'Stacktris', 'Shapez.io'] },
 
-  { filename: 'https://krunker.io/', displayname: "krunker.io", desc: 'Krunker.io is a fast-paced browser FPS focused on movement and multiplayer shooting.', image: 'https://krunker.co.uk/wp-content/uploads/2025/11/krunker.webp', type: 'special', recommended: ['ev.io', 'Zombs Royale', 'Gun Knight'] },
+  { filename: 'https://krunker.io/', displayname: "krunker.io", desc: 'Krunker.io is a fast-paced browser FPS focused on movement and multiplayer shooting.', image: 'https://krunker.co.uk/wp-content/uploads/2025/11/krunker.webp', type: 'web', recommended: ['ev.io', 'Zombs Royale', 'Gun Knight'] },
 
-  { filename: 'https://zombs.io/', displayname: "zombs.io", desc: 'Zombs.io is a base defense survival game where you build and defend against waves.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwUQ4WU6HILmP3J4rOLcMJeGRXL8O5_pxPeA&s', type: 'special', recommended: ['Shapez.io', 'Space Company', 'Bloons TD4'] },
+  { filename: 'https://zombs.io/', displayname: "zombs.io", desc: 'Zombs.io is a base defense survival game where you build and defend against waves.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwUQ4WU6HILmP3J4rOLcMJeGRXL8O5_pxPeA&s', type: 'web', recommended: ['Shapez.io', 'Space Company', 'Bloons TD4'] },
 
-  { filename: 'https://zombsroyale.io/', displayname: "Zombs Royale", desc: 'Zombs Royale is a 2D battle royale shooter with fast matches and loot-based combat.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfkghNZ9V1YI_hJToW3cmb2ZEWDB80-wOxeA&s', type: 'special', recommended: ['Krunker', 'ev.io', 'Brawl Stars'] },
+  { filename: 'https://zombsroyale.io/', displayname: "Zombs Royale", desc: 'Zombs Royale is a 2D battle royale shooter with fast matches and loot-based combat.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfkghNZ9V1YI_hJToW3cmb2ZEWDB80-wOxeA&s', type: 'web', recommended: ['Krunker', 'ev.io', 'Brawl Stars'] },
 
-  { filename: 'https://lordz.io/', displayname: "lordz.io", desc: 'lordz.io is a multiplayer strategy game where you build armies and fight for territory.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShpDoqsStil5bb-SoSFIfY2tr9TlCgb7pPPQ&s', type: 'special', recommended: ['Zombs.io', 'Shapez.io', 'Space Company'] },
+  { filename: 'https://lordz.io/', displayname: "lordz.io", desc: 'lordz.io is a multiplayer strategy game where you build armies and fight for territory.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShpDoqsStil5bb-SoSFIfY2tr9TlCgb7pPPQ&s', type: 'web', recommended: ['Zombs.io', 'Shapez.io', 'Space Company'] },
 
-  { filename: 'https://secret-hitler.online/', displayname: "Secret Hitler", desc: 'Secret Hitler is a social deduction game where players bluff and vote to uncover hidden roles.', image: 'https://th.bing.com/th/id/OIP.0JcC1kGH2AJkAIT7p1zw0gAAAA?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3', type: 'special', recommended: ['Gartic Phone', 'Skribbl.io', 'Ink Game'] },
+  { filename: 'https://secret-hitler.online/', displayname: "Secret Hitler", desc: 'Secret Hitler is a social deduction game where players bluff and vote to uncover hidden roles.', image: 'https://th.bing.com/th/id/OIP.0JcC1kGH2AJkAIT7p1zw0gAAAA?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3', type: 'web', recommended: ['Gartic Phone', 'Skribbl.io', 'Ink Game'] },
 
-  { filename: 'https://smashkarts.io/', displayname: "Smash Karts", desc: 'Smash Karts is a multiplayer kart combat game with weapons and arena-style battles.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdrpTBNT0iI8zuPF0NX0z6t9fJtigQpEhsQ&s', type: 'special', recommended: ['Kart Bros', 'RL Sideswipe', 'Brawl Stars'] },
+  { filename: 'https://smashkarts.io/', displayname: "Smash Karts", desc: 'Smash Karts is a multiplayer kart combat game with weapons and arena-style battles.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdrpTBNT0iI8zuPF0NX0z6t9fJtigQpEhsQ&s', type: 'web', recommended: ['Kart Bros', 'RL Sideswipe', 'Brawl Stars'] },
 
-  { filename: 'https://imisaacwu.github.io/webatro/', displayname: "Balatro", desc: 'Balatro is a roguelike poker deckbuilder focused on combos and score multipliers.', image: 'https://play-lh.googleusercontent.com/RSPv_SMlA3Lun8VHaJD7xCBQg29eCJR9sNJtZNJGlybVs8byYVLz4WnohrbLScC9srg', type: 'special', recommended: ['Dungeon Deck', 'Die In The Dungeon', 'Dungeons and Degenerate Gamblers'] },
+  { filename: 'https://imisaacwu.github.io/webatro/', displayname: "Balatro", desc: 'Balatro is a roguelike poker deckbuilder focused on combos and score multipliers.', image: 'https://play-lh.googleusercontent.com/RSPv_SMlA3Lun8VHaJD7xCBQg29eCJR9sNJtZNJGlybVs8byYVLz4WnohrbLScC9srg', type: 'web', recommended: ['Dungeon Deck', 'Die In The Dungeon', 'Dungeons and Degenerate Gamblers'] },
 
-  { filename: 'https://shapez.io', displayname: "shapez.io", desc: 'shapez.io is a factory automation game where you design systems to process shapes.', image: 'https://f4.bcbits.com/img/a2183267624_16.jpg', type: 'special', recommended: ['Space Company', 'Zombs.io', 'Bloons TD4'] },
+  { filename: 'https://shapez.io', displayname: "shapez.io", desc: 'shapez.io is a factory automation game where you design systems to process shapes.', image: 'https://f4.bcbits.com/img/a2183267624_16.jpg', type: 'web', recommended: ['Space Company', 'Zombs.io', 'Bloons TD4'] },
 
-  { filename: 'https://slowroads.io', displayname: "Slowroads", desc: 'Slowroads is a relaxing driving simulator focused on endless procedural roads.', image: 'https://img.itch.zone/aW1nLzI1NzAwNDUwLmpwZw==/original/Rztzj2.jpg', type: 'special', recommended: ['Drift Boss', 'Highway Racer', 'Polytrack'] },
+  { filename: 'https://slowroads.io', displayname: "Slowroads", desc: 'Slowroads is a relaxing driving simulator focused on endless procedural roads.', image: 'https://img.itch.zone/aW1nLzI1NzAwNDUwLmpwZw==/original/Rztzj2.jpg', type: 'web', recommended: ['Drift Boss', 'Highway Racer', 'Polytrack'] },
 
-  { filename: 'https://ngsc.freddecgames.com/', displayname: "Space Company", desc: 'Space Company is an incremental strategy game focused on space resource expansion.', image: 'https://play-lh.googleusercontent.com/VjwQdDvXxeWZSDy2GNAkttsojRQ487s8TCmz-bnuJC4iS9Rqntd4xICrvmTkaCEYsN1H=w240-h480', type: 'special', recommended: ['Shapez.io', 'Cookie Clicker', 'Zombs.io'] },
+  { filename: 'https://ngsc.freddecgames.com/', displayname: "Space Company", desc: 'Space Company is an incremental strategy game focused on space resource expansion.', image: 'https://play-lh.googleusercontent.com/VjwQdDvXxeWZSDy2GNAkttsojRQ487s8TCmz-bnuJC4iS9Rqntd4xICrvmTkaCEYsN1H=w240-h480', type: 'web', recommended: ['Shapez.io', 'Cookie Clicker', 'Zombs.io'] },
 
-  { filename: 'https://diep.io/', displayname: "diep.io", desc: 'diep.io is a multiplayer tank shooter focused on upgrading and surviving arena battles.', image: 'https://upload.wikimedia.org/wikipedia/en/e/e2/Diepio_mobile_logo.webp', type: 'special', recommended: ['Krunker', 'ev.io', 'Zombs Royale'] },
+  { filename: 'https://diep.io/', displayname: "diep.io", desc: 'diep.io is a multiplayer tank shooter focused on upgrading and surviving arena battles.', image: 'https://upload.wikimedia.org/wikipedia/en/e/e2/Diepio_mobile_logo.webp', type: 'web', recommended: ['Krunker', 'ev.io', 'Zombs Royale'] },
 
-  { filename: 'https://skribbl.io/', displayname: "skribbl.io", desc: 'skribbl.io is an online drawing and guessing party game.', image: 'https://brain-lines.io/data/image/game/skribbl-io-b1.jpg', type: 'special', recommended: ['Gartic Phone', 'Secret Hitler', 'Ink Game'] },
+  { filename: 'https://skribbl.io/', displayname: "skribbl.io", desc: 'skribbl.io is an online drawing and guessing party game.', image: 'https://brain-lines.io/data/image/game/skribbl-io-b1.jpg', type: 'web', recommended: ['Gartic Phone', 'Secret Hitler', 'Ink Game'] },
 
-  { filename: 'https://garticphone.com/', displayname: "Gartic Phone", desc: 'Gartic Phone is a party game combining drawing and telephone-style message chains.', image: 'https://assets-prd.ignimgs.com/2022/11/12/gartic-phone-button-1668215807194.jpg?crop=1%3A1%2Csmart&format=jpg&auto=webp&quality=80', type: 'special', recommended: ['Skribbl.io', 'Secret Hitler', 'Ink Game'] },
+  { filename: 'https://garticphone.com/', displayname: "Gartic Phone", desc: 'Gartic Phone is a party game combining drawing and telephone-style message chains.', image: 'https://assets-prd.ignimgs.com/2022/11/12/gartic-phone-button-1668215807194.jpg?crop=1%3A1%2Csmart&format=jpg&auto=webp&quality=80', type: 'web', recommended: ['Skribbl.io', 'Secret Hitler', 'Ink Game'] },
 
-  { filename: 'sandboxels.html', displayname: 'Sandboxels', desc: 'Sandboxels is a falling-sand simulation game where elements interact in complex physics systems.', image: 'https://substackcdn.com/image/fetch/$s_!3uou!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb143b429-a854-43e5-9599-fcba40f40d48_960x918.jpeg', type: 'special', recommended: ['Shapez.io', 'Space Company', 'Stacktris'] },
+  { filename: 'sandboxels.html', displayname: 'Sandboxels', desc: 'Sandboxels is a falling-sand simulation game where elements interact in complex physics systems.', image: 'https://substackcdn.com/image/fetch/$s_!3uou!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb143b429-a854-43e5-9599-fcba40f40d48_960x918.jpeg', type: 'web', recommended: ['Shapez.io', 'Space Company', 'Stacktris'] },
 
     { filename: 'clslitherio', displayname: 'slither.io', desc: 'slither.io is a multiplayer snake game where you grow by consuming pellets and other players.', image: 'https://www.google.com/s2/favicons?domain=slither.io&sz=256', recommended: ['MooMoo.io', 'Zombs Royale', 'ev.io'] },
 
-  { filename: 'https://ev.io', displayname: "ev.io", desc: 'ev.io is a futuristic browser FPS focused on fast movement and arena shooting.', image: 'https://static.keygames.com/0/114810/100607/1024x1024/evio.webp', type: 'special', recommended: ['Krunker', 'Zombs Royale', 'Gun Knight'] },
+  { filename: 'https://ev.io', displayname: "ev.io", desc: 'ev.io is a futuristic browser FPS focused on fast movement and arena shooting.', image: 'https://static.keygames.com/0/114810/100607/1024x1024/evio.webp', type: 'web', recommended: ['Krunker', 'Zombs Royale', 'Gun Knight'] },
 
-  { filename: 'https://www.openguessr.com/', displayname: "OpenGuessr", desc: 'OpenGuessr is a geography guessing game where you identify real-world locations.', image: 'https://somerandomstuff1.wordpress.com/wp-content/uploads/2019/02/geoguessr1.png', type: 'special', recommended: ['Skribbl.io', 'Gartic Phone', 'Ink Game'] },
+  { filename: 'https://www.openguessr.com/', displayname: "OpenGuessr", desc: 'OpenGuessr is a geography guessing game where you identify real-world locations.', image: 'https://somerandomstuff1.wordpress.com/wp-content/uploads/2019/02/geoguessr1.png', type: 'web', recommended: ['Skribbl.io', 'Gartic Phone', 'Ink Game'] },
 
-  { filename: 'https://moomoo.io/', displayname: "MooMoo.io", desc: 'MooMoo.io is a survival base-building game with resource gathering and PvP combat.', image: 'https://kevin.games/assets/cache_image/games/moomoo-io_200x200_98b.jpg', type: 'special', recommended: ['slither.io', 'Zombs.io', 'ev.io'] },
+  { filename: 'https://moomoo.io/', displayname: "MooMoo.io", desc: 'MooMoo.io is a survival base-building game with resource gathering and PvP combat.', image: 'https://kevin.games/assets/cache_image/games/moomoo-io_200x200_98b.jpg', type: 'web', recommended: ['slither.io', 'Zombs.io', 'ev.io'] },
 
   { filename: 'cldungeonsanddegenerategamblers', displayname: "Dungeons and Degenerate Gamblers", desc: 'Dungeons and Degenerate Gamblers is a card-based roguelike focused on risky gambling mechanics.', image: 'https://assets-prd.ignimgs.com/2024/05/27/dungeons-and-degenerate-gamblers-button-1716811260241.jpg', recommended: ['Balatro', 'Dungeon Deck', 'Die In The Dungeon'] },
 
-  { filename: 'https://crosmakesgames.github.io/2048/', displayname: "2048", desc: '2048 is a number puzzle game where you merge tiles to reach 2048.', image: 'https://upload.wikimedia.org/wikipedia/commons/1/18/2048_logo.svg', type: 'special', recommended: ['Stacktris', 'Tetris', 'Cookie Clicker'] },
+  { filename: 'https://crosmakesgames.github.io/2048/', displayname: "2048", desc: '2048 is a number puzzle game where you merge tiles to reach 2048.', image: 'https://upload.wikimedia.org/wikipedia/commons/1/18/2048_logo.svg', type: 'web', recommended: ['Stacktris', 'Tetris', 'Cookie Clicker'] },
 
     { filename: 'clpapaswingeria', displayname: "Papa's Wingeria", desc: 'Papa\'s Wingeria is a restaurant management game where you cook and serve wings.', image: 'https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/0ef4d3c4bd35cc2e9b65f3da07448fc2/papas-wingeria.jfif', recommended: ['Papa\'s Cheeseria', 'Burrito Bison: Launcha Libre', 'Cookie Clicker'] },
 ];
@@ -5162,7 +5168,11 @@ canvas {
     let featuredGameBlobUrl = '';
 
     const FEATURED_FRAME_DEFAULT_SANDBOX = 'allow-scripts allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-downloads';
-    const FEATURED_FRAME_SPECIAL_SANDBOX = FEATURED_FRAME_DEFAULT_SANDBOX + ' allow-same-origin';
+    const FEATURED_FRAME_WEB_SANDBOX = FEATURED_FRAME_DEFAULT_SANDBOX + ' allow-same-origin';
+
+    function isFeaturedWebGame(game) {
+        return game && (game.type === 'web' || game.type === 'webnosandbox');
+    }
 
     function isLobbyCodeFeaturedGame(game) {
         const fileName = String((game && game.filename) || '').toLowerCase();
@@ -5196,7 +5206,7 @@ canvas {
         if (!rawFilename) return 'about:blank';
         if (rawFilename.toLowerCase() === 'undefined' || rawFilename.toLowerCase() === 'null') return 'about:blank';
 
-        if (game.type === 'special') {
+        if (isFeaturedWebGame(game)) {
             if (/^https?:\/\//i.test(rawFilename)) {
                 return rawFilename;
             }
@@ -5231,19 +5241,24 @@ canvas {
         if (!game) return '';
         const url = resolveFeaturedIframeUrl(game);
         if (!url) return '';
-        const typeToken = game.type === 'special' ? 'special' : 'database';
+        const typeToken = isFeaturedWebGame(game) ? game.type : 'database';
         return `${typeToken}:${url}`;
     }
 
     function setFeaturedFrameSandbox(frameEl, game) {
         if (!frameEl) return;
-        const sandboxValue = game && game.type === 'special'
-            ? FEATURED_FRAME_SPECIAL_SANDBOX
+        if (game && game.type === 'webnosandbox') {
+            frameEl.removeAttribute('sandbox');
+            return;
+        }
+
+        const sandboxValue = game && game.type === 'web'
+            ? FEATURED_FRAME_WEB_SANDBOX
             : FEATURED_FRAME_DEFAULT_SANDBOX;
         frameEl.setAttribute('sandbox', sandboxValue);
     }
 
-    function buildSpecialFeaturedSrcDoc(targetUrl) {
+    function buildWebFeaturedSrcDoc(targetUrl) {
         const safeUrl = String(targetUrl || '')
             .replace(/&/g, '&amp;')
             .replace(/"/g, '&quot;');
@@ -5262,15 +5277,21 @@ canvas {
         setFeaturedFrameSandbox(frameEl, game);
         frameEl.removeAttribute('srcdoc');
 
-        if (game.type === 'special') {
+        if (game.type === 'webnosandbox') {
+            frameEl.src = targetUrl || 'about:blank';
+            updateFeaturedFrameScrollMode();
+            return;
+        }
+
+        if (game.type === 'web') {
             frameEl.src = 'about:blank';
-            frameEl.srcdoc = buildSpecialFeaturedSrcDoc(targetUrl || 'about:blank');
+            frameEl.srcdoc = buildWebFeaturedSrcDoc(targetUrl || 'about:blank');
             updateFeaturedFrameScrollMode();
             return;
         }
 
         frameEl.src = 'about:blank';
-        frameEl.srcdoc = buildSpecialFeaturedSrcDoc(targetUrl || 'about:blank');
+        frameEl.srcdoc = buildWebFeaturedSrcDoc(targetUrl || 'about:blank');
         updateFeaturedFrameScrollMode();
     }
 
@@ -5282,7 +5303,7 @@ canvas {
         if (overrideUrl) {
             frameEl.removeAttribute('srcdoc');
             frameEl.src = 'about:blank';
-            frameEl.srcdoc = buildSpecialFeaturedSrcDoc(overrideUrl);
+            frameEl.srcdoc = buildWebFeaturedSrcDoc(overrideUrl);
             updateFeaturedFrameScrollMode();
             return;
         }
@@ -5655,7 +5676,7 @@ canvas {
             if (frameEl) {
                 frameEl.removeAttribute('srcdoc');
                 frameEl.src = 'about:blank';
-                frameEl.srcdoc = buildSpecialFeaturedSrcDoc(targetUrl);
+                frameEl.srcdoc = buildWebFeaturedSrcDoc(targetUrl);
                 updateFeaturedFrameScrollMode();
             }
             currentFeaturedGameUrlOverride = targetUrl;
@@ -5703,7 +5724,7 @@ canvas {
         title.className = 'game-title';
         title.innerText = game.displayname;
 
-        if (game.type === 'special') {
+        if (isFeaturedWebGame(game)) {
             const webBadge = document.createElement('div');
             webBadge.className = 'special-web-badge';
             webBadge.innerText = 'W';
@@ -6845,7 +6866,7 @@ function openSpecial(gamelink, gameTitle) {
                 const targetUrl = currentFeaturedGameUrlOverride || resolveFeaturedIframeUrl(currentFeaturedGame);
                 if (!targetUrl) return;
 
-                if (currentFeaturedGame.type === 'special' || currentFeaturedGameUrlOverride) {
+                if (isFeaturedWebGame(currentFeaturedGame) || currentFeaturedGameUrlOverride) {
                     launchSite(targetUrl, currentFeaturedGame.displayname, { blockNewTabs: true });
                 } else {
                     launchSite(targetUrl, currentFeaturedGame.displayname, { blockNewTabs: true });
