@@ -328,7 +328,16 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
     { id: 198178, type: 'tv' },     // Wonder Man
     { id: 250307, type: 'tv' },     // The Pitt
     { id: 687163, type: 'movie' },  // Project Hail Mary
-    { id: 124364, type: 'tv' }      // FROM
+    { id: 124364, type: 'tv' },     // FROM
+
+    // --- New Additions ---
+{ id: 93405, type: 'tv' },        // Squid Game
+{ id: 119051, type: 'tv' },       // Wednesday
+{ id: 246, type: 'tv' },          // Avatar: The Last Airbender (Animated)
+{ id: 1339713, type: 'movie' },   // Obsession (2026)
+{ id: 1083381, type: 'movie' },   // Backrooms (2026)
+{ id: 604079, type: 'movie' },   // The Long Walk (2025)
+
 ];
             // 1. Randomize the list
             const randomizedList = shuffleList(myFeaturedList);
@@ -440,7 +449,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
     function parseRouteFromUrl() {
         const params = new URLSearchParams(window.location.search);
         const requestedView = (params.get('view') || 'home').toLowerCase();
-        const allowedViews = ['home', 'browse', 'continue', 'sports', 'details'];
+        const allowedViews = ['home', 'browse', 'continue', 'youtube', 'sports', 'details'];
         const view = allowedViews.includes(requestedView) ? requestedView : 'home';
 
         if (view !== 'details') {
@@ -563,6 +572,10 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
         const navBtn = document.getElementById(`nav-${viewName}`);
         if(navBtn) navBtn.classList.add('active');
 
+        if (viewName !== 'details' && viewName !== 'sports' && viewName !== 'youtube') {
+            pauseActiveTvMedia();
+        }
+
         window.scrollTo(0,0);
 
         if(viewName === 'home') {
@@ -586,6 +599,8 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
             
         } else if(viewName === 'continue') {
             renderContinueWatching();
+        } else if(viewName === 'youtube') {
+            initYoutubeView();
         } else if(viewName === 'sports') {
             initSportsView();
         } else if(viewName === 'details' && param) {
@@ -600,6 +615,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
             home: 'Horion TV',
             browse: 'Horion TV - Browse',
             continue: 'Horion TV - Continue Watching',
+            youtube: 'YouTube - Horion TV',
             sports: 'Live Sports - Horion TV',
             details: 'Horion TV'
         };
@@ -625,6 +641,84 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
         const targetBtn = document.getElementById(buttonId);
         if (targetBtn) targetBtn.classList.add('active');
     }
+
+    function setFrameToAboutBlank(frameId) {
+        const frame = document.getElementById(frameId);
+        if (frame) frame.src = 'about:blank';
+    }
+
+    function extractYoutubeVideoId(value) {
+        const trimmed = String(value || '').trim();
+        if (!trimmed) return '';
+        if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+        try {
+            const parsed = new URL(trimmed);
+            const host = parsed.hostname.replace(/^www\./i, '').toLowerCase();
+            if (host === 'youtu.be') {
+                const idFromPath = parsed.pathname.split('/').filter(Boolean)[0] || '';
+                return /^[a-zA-Z0-9_-]{11}$/.test(idFromPath) ? idFromPath : '';
+            }
+            if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'music.youtube.com') {
+                const watchId = parsed.searchParams.get('v') || '';
+                if (/^[a-zA-Z0-9_-]{11}$/.test(watchId)) return watchId;
+                const pathBits = parsed.pathname.split('/').filter(Boolean);
+                const embedIndex = pathBits.indexOf('embed');
+                if (embedIndex !== -1 && pathBits[embedIndex + 1]) {
+                    const embeddedId = pathBits[embedIndex + 1];
+                    return /^[a-zA-Z0-9_-]{11}$/.test(embeddedId) ? embeddedId : '';
+                }
+            }
+        } catch (error) {
+            // Treat malformed URLs as plain IDs below.
+        }
+        const maybeId = trimmed.match(/[a-zA-Z0-9_-]{11}/);
+        return maybeId ? maybeId[0] : trimmed;
+    }
+
+    function buildYoutubeSearchUrl(value) {
+        return extractYoutubeVideoId(value);
+    }
+
+    function renderYoutubeFrame(targetUrl) {
+        const frame = document.getElementById('youtube-frame');
+        if (!frame) return;
+        const videoId = extractYoutubeVideoId(targetUrl);
+        if (!videoId) {
+            frame.src = 'about:blank';
+            return;
+        }
+        const embedUrl = `https://invidious.tiekoetter.com/embed/${encodeURIComponent(videoId)}`;
+        const escaped = embedUrl.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+        frame.srcdoc = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + escaped + '" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></body></html>';
+    }
+
+    function initYoutubeView() {
+        const form = document.getElementById('youtube-search-form');
+        const input = document.getElementById('youtube-search-input');
+        if (input && !input.placeholder) {
+            input.placeholder = 'Enter YouTube video ID or link';
+        }
+        if (form && !form.dataset.bound) {
+            form.dataset.bound = '1';
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                renderYoutubeFrame(buildYoutubeSearchUrl(input ? input.value : ''));
+            });
+        }
+        renderYoutubeFrame(buildYoutubeSearchUrl(input ? input.value : ''));
+    }
+
+    function pauseActiveTvMedia() {
+        setFrameToAboutBlank('video-player');
+        setFrameToAboutBlank('sports-stream-frame');
+        setFrameToAboutBlank('youtube-frame');
+    }
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+            pauseActiveTvMedia();
+        }
+    });
 
     function setSportsStatus(message, isError) {
         const statusEl = document.getElementById('sports-status');
@@ -1425,11 +1519,11 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
                     <div class="server-bar">
                         <div>
                             <div style="color:white; font-weight:bold;">${episodeTitleText}</div>
-                            <div style="color:var(--text-grey); font-size:0.8rem;">SOURCE: ${state.currentServer === 'server1' ? 'VidSrc (S1)' : 'VidCloud (S2)'}</div>
+                            <div style="color:var(--text-grey); font-size:0.8rem;">SOURCE: ${state.currentServer === 'server1' ? 'VidLink (S1)' : 'VidSrc (S2)'}</div>
                         </div>
                         <div style="display:flex; gap:10px;">
-                            <button onclick="switchServer('server1')" class="btn-secondary ${state.currentServer === 'server1' ? 'active' : ''}">S1</button>
-                            <button onclick="switchServer('server2')" class="btn-secondary ${state.currentServer === 'server2' ? 'active' : ''}">S2</button>
+                            <button onclick="switchServer('server1')" class="btn-secondary ${state.currentServer === 'server1' ? 'active' : ''}">S1: No lag, lower quality</button>
+                            <button onclick="switchServer('server2')" class="btn-secondary ${state.currentServer === 'server2' ? 'active' : ''}">S2: Very laggy, high quality</button>
                         </div>
                     </div>
                     
@@ -1562,55 +1656,68 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
         }
     }
 
-    function playEpisode(season, index) {
-        state.currentSeason = season;
-        state.currentEpisode = state.currentShow.episodes[season][index];
-        saveProgress(); 
-        renderDetailsView(); 
-        window.scrollTo(0,0);
-        syncCurrentDetailsUrl(true);
+ function playEpisode(season, index) {
+    state.currentSeason = season;
+    state.currentEpisode = state.currentShow.episodes[season][index];
 
-        try {
-            if (window.parent && window.parent !== window && typeof window.parent.onTvViewChange === 'function' && state.currentShow) {
-                window.parent.onTvViewChange('details', {
-                    id: state.currentShow.id,
-                    type: state.currentShow.type,
-                    season: state.currentSeason,
-                    epNumber: state.currentEpisode ? state.currentEpisode.number : null,
-                    title: state.currentShow.title || ''
-                });
-            }
-        } catch (err) {
-            // Ignore parent messaging errors.
+    saveProgress();
+    renderDetailsView();
+    window.scrollTo(0, 0);
+    syncCurrentDetailsUrl(true);
+
+    try {
+        if (
+            window.parent &&
+            window.parent !== window &&
+            typeof window.parent.onTvViewChange === 'function' &&
+            state.currentShow
+        ) {
+            window.parent.onTvViewChange('details', {
+                id: state.currentShow.id,
+                type: state.currentShow.type,
+                season: state.currentSeason,
+                epNumber: state.currentEpisode?.number ?? (index + 1),
+                title: state.currentShow.title || ''
+            });
         }
+    } catch (err) {
+        // Ignore parent messaging errors.
     }
+}
 
-    function switchServer(server) {
-        state.currentServer = server;
-        renderDetailsView();
-        syncCurrentDetailsUrl(true);
-    }
+function switchServer(server) {
+    state.currentServer = server;
+    renderDetailsView();
+    syncCurrentDetailsUrl(true);
+}
 
-    function getProviderUrl(imdbId, tmdbId, type, season = null, episode = null) {
-        const idToUse = tmdbId || imdbId;
-        
-        if (state.currentServer === 'server1') {
-            const tmdbValue = encodeURIComponent(String(tmdbId || idToUse || ''));
-            if (type === 'movie') {
-                return `https://vidsrcme.ru/embed/movie?tmdb=${tmdbValue}`;
-            } else {
-                return `https://vidsrcme.ru/embed/tv?tmdb=${tmdbValue}&season=${encodeURIComponent(String(season || 1))}&episode=${encodeURIComponent(String(episode || 1))}`;
-            }
-        } else {
-            if (type === 'movie') {
-                return `https://multiembed.mov/directstream.php?video_id=${imdbId}&tmdb=${tmdbId}`;
-            } else {
-                return `https://multiembed.mov/directstream.php?video_id=${imdbId}&tmdb=${tmdbId}&s=${season}&e=${episode}`;
-            }
+function getProviderUrl(imdbId, tmdbId, type, season = null, episode = null) {
+    const idToUse = tmdbId || imdbId;
+
+    // Ensure valid season/episode values
+    const seasonValue = season ?? state.currentSeason ?? 1;
+    const episodeValue =
+        episode ??
+        state.currentEpisode?.number ??
+        state.currentEpisode?.episode_number ??
+        1;
+
+    if (state.currentServer === 'server1') {
+        if (type === 'movie') {
+            return `https://vidlink.pro/movie/${idToUse}?primaryColor=0278fd&secondaryColor=a2a2a2&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=false`;
         }
+
+        return `https://vidlink.pro/tv/${idToUse}/${seasonValue}/${episodeValue}?primaryColor=0278fd&secondaryColor=a2a2a2&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=false`;
     }
 
-    // ========================================== 
+    if (type === 'movie') {
+        return `https://www.vidsrc.wtf/api/1/movie/?id=${idToUse}`;
+    }
+
+    return `https://www.vidsrc.wtf/api/1/tv/?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
+}
+
+    // https://vidlink.pro/movie/${idToUse}?primaryColor=0278fd&secondaryColor=a2a2a2&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=false
     // 7. EXTERNAL PAGE LAUNCHER LOGIC
     // ==========================================
 

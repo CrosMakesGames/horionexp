@@ -128,6 +128,8 @@
         }
 
         .nav-item:hover { color: var(--neon-blue); }
+        .nav-item.youtube-btn { color: white; }
+        .nav-item.youtube-btn:hover { color: var(--neon-blue); }
         .nav-item.active { color: var(--hacker-blue); border-bottom: 1px solid var(--hacker-blue); }
 
         .nav-collapse-btn {
@@ -681,6 +683,79 @@
             line-height: 1.45;
         }
 
+        .youtube-shell {
+            display: grid;
+            gap: 14px;
+        }
+
+        .youtube-search-bar {
+            display: flex;
+            gap: 0;
+            flex-wrap: nowrap;
+            align-items: center;
+            background: rgba(0, 12, 28, 0.72);
+            border: 1px solid rgba(0, 112, 255, 0.22);
+            border-radius: 999px;
+            padding: 6px;
+            box-shadow: 0 0 18px rgba(0, 229, 255, 0.08);
+        }
+
+        .youtube-search-bar form {
+            display: flex;
+            flex: 1 1 420px;
+            align-items: center;
+        }
+
+        .youtube-search-bar .search-input {
+            flex: 1 1 auto;
+            min-width: 0;
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            padding: 14px 18px;
+        }
+
+        .youtube-search-bar .search-input:focus {
+            box-shadow: none;
+        }
+
+        .youtube-load-btn {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            border: none;
+            border-radius: 50%;
+            background: var(--hacker-blue);
+            color: #000;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 0 14px rgba(0, 112, 255, 0.35);
+        }
+
+        .youtube-load-btn:hover {
+            background: var(--neon-blue);
+            box-shadow: 0 0 18px rgba(0, 229, 255, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .youtube-load-btn svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+            fill: #000;
+        }
+
+        .youtube-frame {
+            width: 100%;
+            min-height: 72vh;
+            border: 1px solid rgba(110, 170, 215, 0.25);
+            border-radius: 14px;
+            background: #000;
+        }
+
         .server-bar {
             background: rgba(0, 112, 255, 0.05);
             border: 1px solid rgba(0, 112, 255, 0.1);
@@ -852,8 +927,8 @@
         ::-webkit-scrollbar-thumb { background: var(--hacker-blue); }
         ::-webkit-scrollbar-track { background: #000; }
     </style>
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
 
@@ -873,6 +948,7 @@
     <div class="nav-right">
         <span onclick="router('home')" id="nav-home" class="nav-item">HOME</span>
         <span onclick="router('browse')" id="nav-browse" class="nav-item">BROWSE</span>
+        <span onclick="router('youtube')" id="nav-youtube" class="nav-item youtube-btn">YOUTUBE</span>
         <span onclick="launchSportsTool()" id="nav-sports" class="nav-item sports-btn">LIVE SPORTS</span>
         <span onclick="router('continue')" id="nav-continue" class="nav-item">CONTINUE WATCHING</span>
     </div>
@@ -917,12 +993,27 @@
         </div>
     </div>
 
+    <div id="view-youtube" class="view-section">
+        <h2 style="font-weight:300; letter-spacing:4px; border-bottom:1px solid #333; padding-bottom:10px; margin-top:0;">YOUTUBE</h2>
+        <div class="youtube-shell">
+            <form id="youtube-search-form" class="youtube-search-bar">
+                <input id="youtube-search-input" type="text" class="search-input" placeholder="Enter YouTube video ID or link" autocomplete="off" spellcheck="false">
+                <button type="submit" class="youtube-load-btn" aria-label="Load YouTube video">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M8 5l8 7-8 7V5z"></path>
+                    </svg>
+                </button>
+            </form>
+            <iframe id="youtube-frame" class="youtube-frame" src="about:blank" allow="autoplay; fullscreen; encrypted-media; picture-in-picture"></iframe>
+        </div>
+    </div>
+
     <div id="view-sports" class="view-section">
         <h2 style="font-weight:300; letter-spacing:4px; border-bottom:1px solid #333; padding-bottom:10px; margin-top:0;">LIVE SPORTS</h2>
 
         <div class="sports-ad-warning sports-primary-warning">
-            Horion Live Sports is VERY buggy at the moment. Please consider using this link instead for now.
-            <a href="#" onclick="launchSite('https://streami.su/'); return false;">Open Streami.su in about:blank</a>
+            School networks typically block Horion's live sports streams. It's great at home, but if your at school, consider using 
+            <a href="#" onclick="launchSite('https://streami.su/'); return false;"> streami.su in about:blank</a>
         </div>
 
         <div class="sports-ad-warning sports-hidden-warning">
@@ -974,7 +1065,6 @@
                     class="sports-player-frame"
                     src="about:blank"
                     allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-                    allowfullscreen
                 ></iframe>
 
                 <div id="sports-player-status" class="sports-player-status">Choose a match to load stream sources.</div>
@@ -996,8 +1086,11 @@
             <img src="../cmg.png" alt="CMG" class="site-footer-logo">
         </div>
         <div class="site-footer-links">
-            <a href="https://www.youtube.com/channel/UC19axu6m6KscPGbNxfUm3Dg" target="_blank" rel="noopener noreferrer">YouTube</a>
-            <a href="https://www.tiktok.com/@horiongames" target="_blank" rel="noopener noreferrer">TikTok</a>
+            <a href="https://www.youtube.com/channel/UCQrYBaYJDoSihLEx-gP820g" target="_blank" rel="noopener noreferrer">YouTube</a>
+            <a href="https://www.tiktok.com/@horionunblockedgames?lang=en" target="_blank" rel="noopener noreferrer">TikTok</a>
+            <a href="https://discord.gg/5dTP5SbafH" target="_blank" rel="noopener noreferrer">Discord</a> 
+            | 
+            <a href="https://crosmakesgames.github.io" target="_blank" rel="noopener noreferrer">crosmakesgames.github.io</a>
         </div>
     </div>
 </footer>
