@@ -1540,8 +1540,8 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
                             <div style="color:var(--text-grey); font-size:0.8rem;">SOURCE: ${state.currentServer === 'server1' ? 'VidLink (S1)' : 'VidSrc (S2)'}</div>
                         </div>
                         <div style="display:flex; gap:10px;">
-                            <button onclick="switchServer('server1')" class="btn-secondary ${state.currentServer === 'server1' ? 'active' : ''}">S1: No lag, lower quality</button>
-                            <button onclick="switchServer('server2')" class="btn-secondary ${state.currentServer === 'server2' ? 'active' : ''}">S2: Very laggy, high quality</button>
+                            <button onclick="switchServer('server1')" class="btn-secondary ${state.currentServer === 'server1' ? 'active' : ''}">S1</button>
+                            <button onclick="switchServer('server2')" class="btn-secondary ${state.currentServer === 'server2' ? 'active' : ''}">S2</button>
                         </div>
                     </div>
                     
@@ -1735,7 +1735,7 @@ function getProviderUrl(imdbId, tmdbId, type, season = null, episode = null) {
     }
 
     if (type === 'movie') {
-        return `https://www.vidsrc.wtf/api/1/movie/?id=${idToUse}`;
+        return `https://www.vidsrc.wtf/api/4/movie/?id=${idToUse}`;
     }
 
     return `https://www.vidsrc.wtf/api/1/tv/?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
