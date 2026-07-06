@@ -408,13 +408,13 @@
             <div class="switch-track" id="switch-track">
                 <section class="mode-pane active" aria-label="Games mode" data-mode-pane="games">
                     <div class="embed-wrap">
-                        <iframe id="games-frame" class="app-frame" title="Horion Games"></iframe>
+                        <iframe id="games-frame" class="app-frame" title="Horion Games" allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen></iframe>
                     </div>
                 </section>
 
                 <section class="mode-pane" aria-label="TV mode" data-mode-pane="tv">
                     <div class="embed-wrap">
-                        <iframe id="tv-frame" class="app-frame" title="Horion TV"></iframe>
+                        <iframe id="tv-frame" class="app-frame" title="Horion TV" allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen></iframe>
                     </div>
                 </section>
             </div>
@@ -471,6 +471,7 @@ body {
     overflow-x: hidden;
     overflow-y: scroll;
     scroll-behavior: smooth;
+    scroll-padding-top: var(--navbar-content-offset, 125px);
 }
 
 /* --- BOOTUP OVERLAY --- */
@@ -667,7 +668,7 @@ body.navbar-hidden .nav-collapse-btn::before {
 /* --- CONTENT CONTAINER --- */
 .content-container {
     max-width: 1200px;
-    margin: 125px auto 40px;
+    margin: var(--navbar-content-offset, 125px) auto 40px;
     padding: 60px 40px;
     position: relative;
     z-index: 1;
@@ -1396,14 +1397,19 @@ body.navbar-hidden .nav-collapse-btn::before {
 .featured-game-view {
     max-width: none;
     width: 100%;
-    margin: 0;
-    min-height: calc(100vh - 78px);
+    margin: var(--navbar-content-offset, 125px) 0 0;
+    min-height: calc(100vh - var(--navbar-content-offset, 125px));
     border-radius: 0;
     border-left: 0;
     border-right: 0;
     padding: 18px 20px 24px;
     align-items: stretch;
     text-align: left;
+}
+
+body.navbar-hidden .featured-game-view {
+    margin-top: 40px;
+    min-height: calc(100vh - 40px);
 }
 
 .featured-game-layout {
@@ -1460,6 +1466,21 @@ body.navbar-hidden .nav-collapse-btn::before {
     overflow: hidden;
     background: #000;
     box-shadow: 0 0 22px rgba(0, 112, 255, 0.18);
+}
+
+.featured-game-frame-wrap:fullscreen,
+.featured-game-frame-wrap:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    border: 0;
+    border-radius: 0;
+}
+
+.featured-game-frame-wrap:fullscreen .featured-game-frame,
+.featured-game-frame-wrap:-webkit-full-screen .featured-game-frame {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
 }
 
 .featured-game-frame {
@@ -1689,6 +1710,17 @@ canvas {
     background-color: #555; /* Lighter on hover */
 }
 
+.featured-sort-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.featured-sort-controls .sort-button {
+    margin-bottom: 0;
+}
+
 /* --- SCROLLBAR --- */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-thumb { background: var(--hacker-blue); }
@@ -1777,9 +1809,14 @@ canvas {
     <div class="content-container">
         <input type="text" id="searchFeatured" placeholder="SEARCH FEATURED..." autocomplete="off" spellcheck="false">
         <h3 class="featured-note">Featured games with a W in the top left are web games and may not work if your teacher is watching you on Securly/GoGuardian.</h3>
-        <button id="sort-btn" class="sort-button" onclick="toggleSort()">
-            Sort: A-Z
-        </button>
+        <div class="featured-sort-controls">
+            <button id="sort-btn" class="sort-button" onclick="toggleSort()">
+                Sort: Alphabetical
+            </button>
+            <button id="genre-btn" class="sort-button genre-sort-button" onclick="toggleFeaturedGenre()" hidden>
+                Genre: Rougelike
+            </button>
+        </div>
 
         <div id="featured-grid">
             <!-- Populated via JS -->
@@ -1794,7 +1831,7 @@ canvas {
             <div class="featured-game-main">
                 <p class="featured-game-notice">If it says it's blocked, please refresh and try again.</p>
                 <div class="featured-game-frame-wrap">
-                    <iframe id="featured-game-frame" class="featured-game-frame" src="about:blank" title="Featured Game Player" sandbox="allow-scripts allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-downloads" allow="autoplay; fullscreen; xr-spatial-tracking; encrypted-media; clipboard-read; clipboard-write; display-capture; gamepad; picture-in-picture; screen-wake-lock" referrerpolicy="strict-origin-when-cross-origin" scrolling="no"></iframe>
+                    <iframe id="featured-game-frame" class="featured-game-frame" src="about:blank" title="Featured Game Player" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-downloads" allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" scrolling="no"></iframe>
                 </div>
 
                 <p class="featured-game-notice">If a game does not work, open it in about:blank.</p>
@@ -2101,11 +2138,11 @@ canvas {
 
   { filename: 'https://lordz.io/', displayname: "lordz.io", desc: 'lordz.io is a multiplayer strategy game where you build armies and fight for territory.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShpDoqsStil5bb-SoSFIfY2tr9TlCgb7pPPQ&s', type: 'web', recommended: ['Zombs.io', 'Shapez.io', 'Space Company'] },
 
-  { filename: 'https://secret-hitler.online/', displayname: "Secret Hitler", desc: 'Secret Hitler is a social deduction game where players bluff and vote to uncover hidden roles.', image: 'https://th.bing.com/th/id/OIP.0JcC1kGH2AJkAIT7p1zw0gAAAA?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3', type: 'web', recommended: ['Gartic Phone', 'Skribbl.io', 'Ink Game'] },
+  { filename: 'https://secret-hitler.online/', displayname: "Secret Hitler", desc: 'Secret Hitler is a social deduction game where players bluff and vote to uncover hidden roles.', image: 'https://th.bing.com/th/id/OIP.0JcC1kGH2AJkAIT7p1zw0gAAAA?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3', type: 'webnosandbox', recommended: ['Gartic Phone', 'Skribbl.io', 'Ink Game'] },
 
   { filename: 'https://smashkarts.io/', displayname: "Smash Karts", desc: 'Smash Karts is a multiplayer kart combat game with weapons and arena-style battles.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdrpTBNT0iI8zuPF0NX0z6t9fJtigQpEhsQ&s', type: 'web', recommended: ['Kart Bros', 'RL Sideswipe', 'Brawl Stars'] },
 
-  { filename: 'https://imisaacwu.github.io/webatro/', displayname: "Balatro", desc: 'Balatro is a roguelike poker deckbuilder focused on combos and score multipliers.', image: 'https://play-lh.googleusercontent.com/RSPv_SMlA3Lun8VHaJD7xCBQg29eCJR9sNJtZNJGlybVs8byYVLz4WnohrbLScC9srg', type: 'web', recommended: ['Dungeon Deck', 'Die In The Dungeon', 'Dungeons and Degenerate Gamblers'] },
+  { filename: 'https://telatro.tomcat.sh/game/', displayname: "Balatro", desc: 'Balatro is a roguelike poker deckbuilder focused on combos and score multipliers.', image: 'https://play-lh.googleusercontent.com/RSPv_SMlA3Lun8VHaJD7xCBQg29eCJR9sNJtZNJGlybVs8byYVLz4WnohrbLScC9srg', type: 'web', aboutBlankOnly: true, recommended: ['Dungeon Deck', 'Die In The Dungeon', 'Dungeons and Degenerate Gamblers'] },
 
   { filename: 'https://shapez.io', displayname: "shapez.io", desc: 'shapez.io is a factory automation game where you design systems to process shapes.', image: 'https://f4.bcbits.com/img/a2183267624_16.jpg', type: 'web', recommended: ['Space Company', 'Zombs.io', 'Bloons TD4'] },
 
@@ -2135,6 +2172,109 @@ canvas {
 
     { filename: 'clpapaswingeria', displayname: "Papa's Wingeria", desc: 'Papa\'s Wingeria is a restaurant management game where you cook and serve wings.', image: 'https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/0ef4d3c4bd35cc2e9b65f3da07448fc2/papas-wingeria.jfif', recommended: ['Papa\'s Cheeseria', 'Burrito Bison: Launcha Libre', 'Cookie Clicker'] },
 ];
+
+    const FEATURED_GENRES = ['Rougelike', 'Action', 'Strategy', 'Platformer'];
+    const FEATURED_GENRE_BY_NAME = {
+        '8 Ball: Classic': 'Strategy',
+        '2048': 'Strategy',
+        '3 Dash': 'Platformer',
+        'Balatro': 'Rougelike',
+        'Baseball Bros': 'Action',
+        'Basket Bros': 'Action',
+        'Bitlife': 'Strategy',
+        'Bloons TD4': 'Strategy',
+        'Brawl Stars': 'Action',
+        'Brotato': 'Rougelike',
+        'Burrito Bison: Launcha Libre': 'Action',
+        'Chicken War': 'Action',
+        'Clear Vison 5': 'Action',
+        'Cluster Rush': 'Platformer',
+        'Cookie Clicker': 'Strategy',
+        'Crossy Road': 'Platformer',
+        'DELTARUNE': 'Rougelike',
+        'Die In The Dungeon': 'Rougelike',
+        'Drive Mad': 'Platformer',
+        'Drift Boss': 'Platformer',
+        'Duck Life 3': 'Strategy',
+        'Dud': 'Platformer',
+        'Rougelike': 'Rougelike',
+        'Dungeons and Degenerate Gamblers': 'Rougelike',
+        'FNAF': 'Strategy',
+        'FNAF: UCN': 'Strategy',
+        'Fnaf 2': 'Strategy',
+        'Fnaf 3': 'Strategy',
+        'Fnaf 4': 'Strategy',
+        'Friday Night Funkin': 'Platformer',
+        'Gartic Phone': 'Strategy',
+        'Gladihoppers': 'Action',
+        'Gun Blood': 'Action',
+        'Gun Knight': 'Rougelike',
+        'Gun Spin': 'Action',
+        'Highway Racer': 'Action',
+        'Hobo 7': 'Action',
+        'Ink Game': 'Action',
+        'Into The Deep': 'Rougelike',
+        'Jetpack Joyride': 'Platformer',
+        'Kart Bros': 'Action',
+        'Level Devil': 'Platformer',
+        'Minecraft 1.9': 'Strategy',
+        'MooMoo.io': 'Strategy',
+        'Nazi Zombies': 'Action',
+        'Nerd.com Videos': 'Strategy',
+        'OVO': 'Platformer',
+        'OpenGuessr': 'Strategy',
+        "Papa's Cheeseria": 'Strategy',
+        "Papa's Wingeria": 'Strategy',
+        'Plants VS Zombies': 'Strategy',
+        'Polytrack': 'Platformer',
+        'RL Sideswipe': 'Action',
+        'Ragdoll Archer': 'Action',
+        'Retro Bowl': 'Strategy',
+        'Run 3': 'Platformer',
+        'Sandboxels': 'Strategy',
+        'Secret Hitler': 'Strategy',
+        'Shapez.io': 'Strategy',
+        'Skribbl.io': 'Strategy',
+        'Slowroads': 'Platformer',
+        'Smash Karts': 'Action',
+        'Snow Rider': 'Platformer',
+        'Soccer Bros': 'Action',
+        'Songl.io': 'Strategy',
+        'Space Company': 'Strategy',
+        'Stacktris': 'Strategy',
+        'Subway Surfers: Barcelona': 'Platformer',
+        'Super Mario Bros 3': 'Platformer',
+        'Tetris': 'Strategy',
+        'Tunnel Rush': 'Platformer',
+        'Western Roulette': 'Action',
+        'Wiki Race': 'Strategy',
+        'Diep.io': 'Action',
+        'Ev.io': 'Action',
+        'Krunker.io': 'Action',
+        'Lordz.io': 'Strategy',
+        'Slither.io': 'Action',
+        'Zombs Royale': 'Action',
+        'Zombs.io': 'Strategy'
+    };
+
+    function getFeaturedGenre(game) {
+        const name = String(game && game.displayname || '').trim();
+        const directMatch = FEATURED_GENRE_BY_NAME[name];
+        if (directMatch) return directMatch;
+
+        const normalized = name.toLowerCase();
+        const lowerDesc = String(game && game.desc || '').toLowerCase();
+        const haystack = `${normalized} ${lowerDesc}`;
+
+        if (haystack.includes('rogue') || haystack.includes('dungeon') || haystack.includes('deckbuilder')) return 'Rougelike';
+        if (haystack.includes('platform') || haystack.includes('runner') || haystack.includes('parkour') || haystack.includes('driving') || haystack.includes('racing')) return 'Platformer';
+        if (haystack.includes('strategy') || haystack.includes('puzzle') || haystack.includes('tower defense') || haystack.includes('simulation') || haystack.includes('management')) return 'Strategy';
+        return 'Action';
+    }
+
+    featuredGames.forEach((game) => {
+        game.genre = getFeaturedGenre(game);
+    });
 
     const databaseFiles = [
         "cl1",
@@ -5031,9 +5171,23 @@ canvas {
     let isGnMathViewActive = false;
     let gnMathFallbackActive = false;
 
+    function updateNavbarContentOffset() {
+        const nav = document.querySelector('.hud-nav');
+        const isHidden = document.body.classList.contains('navbar-hidden');
+        let offset = isHidden ? 40 : 125;
+
+        if (!isHidden && nav) {
+            const rect = nav.getBoundingClientRect();
+            offset = Math.max(96, Math.ceil(rect.bottom + 32));
+        }
+
+        document.body.style.setProperty('--navbar-content-offset', `${offset}px`);
+    }
+
     function setNavbarHidden(isHidden) {
         const shouldHide = Boolean(isHidden);
         document.body.classList.toggle('navbar-hidden', shouldHide);
+        updateNavbarContentOffset();
 
         const toggle = document.getElementById('navbar-toggle');
         if (!toggle) return;
@@ -5049,7 +5203,11 @@ canvas {
         const shouldShow = isGnMathViewActive && gnMathFallbackActive;
         note.classList.toggle('hidden', !shouldShow);
         note.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+        requestAnimationFrame(updateNavbarContentOffset);
     }
+
+    window.addEventListener('resize', updateNavbarContentOffset);
+    document.addEventListener('DOMContentLoaded', updateNavbarContentOffset);
 
     function switchView(viewName, options = {}) {
         const shouldNotifyParent = options.notifyParent !== false;
@@ -5161,19 +5319,26 @@ canvas {
         updateFeaturedFrameScrollMode();
     }
 
-    // Global state to track sort order
-    let isAscending = true;
+    // Global state to track featured browsing controls
+    let featuredSortMode = 'alphabetical';
+    let featuredGenreIndex = 0;
     let currentFeaturedGame = null;
     let currentFeaturedGameUrlOverride = null;
     let featuredFrameLoadToken = 0;
     let featuredFrameSessionKey = '';
     let featuredGameBlobUrl = '';
 
-    const FEATURED_FRAME_DEFAULT_SANDBOX = 'allow-scripts allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-downloads';
-    const FEATURED_FRAME_WEB_SANDBOX = FEATURED_FRAME_DEFAULT_SANDBOX + ' allow-same-origin';
+    const FEATURED_FRAME_DEFAULT_SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-downloads';
+    const FEATURED_FRAME_WEB_SANDBOX = FEATURED_FRAME_DEFAULT_SANDBOX;
+    const FEATURED_FRAME_DEFAULT_ALLOW = 'autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *';
+    const FEATURED_FRAME_WEBNOSANDBOX_ALLOW = 'gamepad *; fullscreen *; autoplay *';
 
     function isFeaturedWebGame(game) {
         return game && (game.type === 'web' || game.type === 'webnosandbox');
+    }
+
+    function isFeaturedAboutBlankOnlyGame(game) {
+        return Boolean(game && game.aboutBlankOnly === true);
     }
 
     function isLobbyCodeFeaturedGame(game) {
@@ -5249,8 +5414,11 @@ canvas {
 
     function setFeaturedFrameSandbox(frameEl, game) {
         if (!frameEl) return;
+        frameEl.setAttribute('allowfullscreen', '');
+
         if (game && game.type === 'webnosandbox') {
             frameEl.removeAttribute('sandbox');
+            frameEl.setAttribute('allow', FEATURED_FRAME_WEBNOSANDBOX_ALLOW);
             return;
         }
 
@@ -5258,6 +5426,7 @@ canvas {
             ? FEATURED_FRAME_WEB_SANDBOX
             : FEATURED_FRAME_DEFAULT_SANDBOX;
         frameEl.setAttribute('sandbox', sandboxValue);
+        frameEl.setAttribute('allow', FEATURED_FRAME_DEFAULT_ALLOW);
     }
 
     function buildWebFeaturedSrcDoc(targetUrl) {
@@ -5265,7 +5434,17 @@ canvas {
             .replace(/&/g, '&amp;')
             .replace(/"/g, '&quot;');
 
-        return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '" allow="autoplay; fullscreen; xr-spatial-tracking; encrypted-media; clipboard-read; clipboard-write; display-capture; gamepad; picture-in-picture; screen-wake-lock" referrerpolicy="no-referrer"></iframe><script>(function(){window.alert=function(){};window.confirm=function(){return false;};window.prompt=function(){return null;};})();<\/script></body></html>';
+        return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '" allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen referrerpolicy="no-referrer"></iframe><script>(function(){window.alert=function(){};window.confirm=function(){return false;};window.prompt=function(){return null;};})();<\/script></body></html>';
+    }
+
+    function buildAboutBlankOnlySrcDoc(game) {
+        const title = String((game && game.displayname) || 'This game')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+
+        return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Arial,sans-serif}body{display:flex;align-items:center;justify-content:center;text-align:center}.msg{font-size:clamp(18px,3vw,34px);font-weight:700;line-height:1.35;padding:24px}.sub{display:block;margin-top:10px;font-size:clamp(12px,1.5vw,16px);font-weight:400;color:#aaa}</style></head><body><div class="msg">Open in about:blank to run<span class="sub">' + title + ' only works when opened in a about:blank.</span></div></body></html>';
     }
 
     function loadFeaturedGameIntoFrame(game) {
@@ -5278,6 +5457,13 @@ canvas {
         featuredFrameSessionKey = getFeaturedFrameSessionKey(game);
         setFeaturedFrameSandbox(frameEl, game);
         frameEl.removeAttribute('srcdoc');
+
+        if (isFeaturedAboutBlankOnlyGame(game)) {
+            frameEl.src = 'about:blank';
+            frameEl.srcdoc = buildAboutBlankOnlySrcDoc(game);
+            updateFeaturedFrameScrollMode();
+            return;
+        }
 
         if (game.type === 'webnosandbox') {
             frameEl.src = targetUrl || 'about:blank';
@@ -5315,8 +5501,18 @@ canvas {
         }
     }
 
+    function getFeaturedFrameFullscreenTarget() {
+        return document.querySelector('.featured-game-frame-wrap') || document.getElementById('featured-game-frame');
+    }
+
     function isFeaturedFrameFullscreen(frameEl) {
-        return document.fullscreenElement === frameEl || document.webkitFullscreenElement === frameEl || document.msFullscreenElement === frameEl;
+        const target = getFeaturedFrameFullscreenTarget();
+        return document.fullscreenElement === target
+            || document.fullscreenElement === frameEl
+            || document.webkitFullscreenElement === target
+            || document.webkitFullscreenElement === frameEl
+            || document.msFullscreenElement === target
+            || document.msFullscreenElement === frameEl;
     }
 
     function updateFeaturedFrameScrollMode() {
@@ -5571,7 +5767,16 @@ canvas {
     }
 
     function toggleSort() {
-        isAscending = !isAscending; // Flip the state
+        const sortModes = ['alphabetical', 'newest', 'genre'];
+        const currentIndex = sortModes.indexOf(featuredSortMode);
+        featuredSortMode = sortModes[(currentIndex + 1) % sortModes.length];
+        const searchFeaturedInput = document.getElementById('searchFeatured');
+        const searchValue = searchFeaturedInput ? searchFeaturedInput.value.trim().toLowerCase() : '';
+        generateFeaturedGrid(searchValue);
+    }
+
+    function toggleFeaturedGenre() {
+        featuredGenreIndex = (featuredGenreIndex + 1) % FEATURED_GENRES.length;
         const searchFeaturedInput = document.getElementById('searchFeatured');
         const searchValue = searchFeaturedInput ? searchFeaturedInput.value.trim().toLowerCase() : '';
         generateFeaturedGrid(searchValue);
@@ -5608,19 +5813,33 @@ canvas {
     function generateFeaturedGrid(searchValue) {
         const container = document.getElementById('featured-grid');
         const sortBtn = document.getElementById('sort-btn');
+        const genreBtn = document.getElementById('genre-btn');
         const safeSearch = String(searchValue || '').trim().toLowerCase();
        
         container.innerHTML = '';
 
         if (sortBtn) {
-            sortBtn.innerText = isAscending ? "Sort: A-Z" : "Sort: Z-A";
+            const sortLabelMap = {
+                alphabetical: 'Sort: Alphabetical',
+                newest: 'Sort: Newest',
+                genre: 'Sort: Genre'
+            };
+            sortBtn.innerText = sortLabelMap[featuredSortMode] || sortLabelMap.alphabetical;
         }
 
-        const sortedGames = [...featuredGames].sort((a, b) => {
-            return isAscending
-                ? a.displayname.localeCompare(b.displayname)
-                : b.displayname.localeCompare(a.displayname);
-        });
+        if (genreBtn) {
+            const currentGenre = FEATURED_GENRES[featuredGenreIndex] || FEATURED_GENRES[0];
+            genreBtn.innerText = `Genre: ${currentGenre}`;
+            genreBtn.hidden = featuredSortMode !== 'genre';
+        }
+
+        let sortedGames = [...featuredGames];
+        if (featuredSortMode === 'alphabetical') {
+            sortedGames.sort((a, b) => a.displayname.localeCompare(b.displayname));
+        } else if (featuredSortMode === 'genre') {
+            const currentGenre = FEATURED_GENRES[featuredGenreIndex] || FEATURED_GENRES[0];
+            sortedGames = sortedGames.filter(game => game.genre === currentGenre);
+        }
 
         const visibleGames = safeSearch
             ? sortedGames.filter(game => String(game.displayname || '').toLowerCase().includes(safeSearch))
@@ -5986,9 +6205,9 @@ function launchSite(targetUrl, pageTitle, options) {
         const safeUrl = String(urlValue || '')
             .replace(/&/g, '&amp;')
             .replace(/"/g, '&quot;');
-        const sandboxAttr = ' sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation"';
+        const sandboxAttr = ' sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation allow-popups allow-popups-to-escape-sandbox allow-downloads"';
         win.document.open();
-        win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '"' + sandboxAttr + ' allow="autoplay; fullscreen; xr-spatial-tracking; encrypted-media; clipboard-read; clipboard-write; display-capture; gamepad; picture-in-picture; screen-wake-lock" referrerpolicy="strict-origin-when-cross-origin"></iframe><script>(function(){window.alert=function(){};window.confirm=function(){return false;};window.prompt=function(){return null;};})();<\/script></body></html>');
+        win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '"' + sandboxAttr + ' allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><script>(function(){window.alert=function(){};window.confirm=function(){return false;};window.prompt=function(){return null;};})();<\/script></body></html>');
         win.document.close();
     };
 
@@ -6018,7 +6237,8 @@ function openInlinePage(targetUrl, titleText, options) {
         <iframe
             id="horion-inline-host-frame"
             src="about:blank"
-            allow="autoplay; fullscreen; xr-spatial-tracking; encrypted-media; clipboard-read; clipboard-write; display-capture"
+            allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *"
+            allowfullscreen
             style="border:none;width:100%;height:100%;background:#000;"
         ></iframe>
     `;
@@ -6044,7 +6264,7 @@ function openInlinePage(targetUrl, titleText, options) {
     if (hostFrame && hostFrame.contentWindow && hostFrame.contentWindow.document) {
         const titleAttr = String(titleText || 'Extension');
 
-        const wrapperHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + titleAttr + '</title><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden}iframe{border:none;width:100%;height:100%;background:#000}</style></head><body><iframe src="' + normalizedUrl + '" allow="autoplay; fullscreen; xr-spatial-tracking; encrypted-media; clipboard-read; clipboard-write; display-capture; gamepad; picture-in-picture; screen-wake-lock"></iframe></body></html>';
+        const wrapperHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + titleAttr + '</title><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden}iframe{border:none;width:100%;height:100%;background:#000}</style></head><body><iframe src="' + normalizedUrl + '" allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen></iframe></body></html>';
         hostFrame.contentWindow.document.open();
         hostFrame.contentWindow.document.write(wrapperHtml);
         hostFrame.contentWindow.document.close();
@@ -6841,10 +7061,15 @@ function openSpecial(gamelink, gameTitle) {
 
         if (fullscreenBtn && featuredFrame) {
             fullscreenBtn.addEventListener('click', () => {
-                if (featuredFrame.requestFullscreen) {
-                    featuredFrame.requestFullscreen();
-                } else if (featuredFrame.webkitRequestFullscreen) {
-                    featuredFrame.webkitRequestFullscreen();
+                const fullscreenTarget = getFeaturedFrameFullscreenTarget();
+                if (!fullscreenTarget) return;
+
+                if (fullscreenTarget.requestFullscreen) {
+                    fullscreenTarget.requestFullscreen();
+                } else if (fullscreenTarget.webkitRequestFullscreen) {
+                    fullscreenTarget.webkitRequestFullscreen();
+                } else if (fullscreenTarget.msRequestFullscreen) {
+                    fullscreenTarget.msRequestFullscreen();
                 }
             });
         }
@@ -6976,6 +7201,7 @@ function openSpecial(gamelink, gameTitle) {
             overflow-x: hidden;
             overflow-y: scroll;
             scroll-behavior: smooth;
+            scroll-padding-top: var(--navbar-content-offset, 125px);
         }
 
         /* --- BOOTUP OVERLAY --- */
@@ -7125,7 +7351,7 @@ function openSpecial(gamelink, gameTitle) {
         /* --- CONTENT CONTAINER --- */
         .content-container {
             max-width: 1400px;
-            margin: 125px auto 40px;
+            margin: var(--navbar-content-offset, 125px) auto 40px;
             padding: 40px;
             position: relative;
             z-index: 1;
@@ -8199,15 +8425,32 @@ function openSpecial(gamelink, gameTitle) {
     window.addEventListener('resize', initParticles);
     initParticles(); animateParticles();
 
+    function updateTvNavbarContentOffset() {
+        const nav = document.querySelector('.hud-nav');
+        const isHidden = document.body.classList.contains('navbar-hidden');
+        let offset = isHidden ? 40 : 125;
+
+        if (!isHidden && nav) {
+            const rect = nav.getBoundingClientRect();
+            offset = Math.max(96, Math.ceil(rect.bottom + 32));
+        }
+
+        document.body.style.setProperty('--navbar-content-offset', `${offset}px`);
+    }
+
     function setTvNavbarHidden(isHidden) {
         const shouldHide = Boolean(isHidden);
         document.body.classList.toggle('navbar-hidden', shouldHide);
+        updateTvNavbarContentOffset();
 
         document.querySelectorAll('.nav-collapse-btn').forEach(toggle => {
             toggle.setAttribute('aria-label', shouldHide ? 'Show navbar' : 'Hide navbar');
             toggle.title = shouldHide ? 'Show navbar' : 'Hide navbar';
         });
     }
+
+    window.addEventListener('resize', updateTvNavbarContentOffset);
+    document.addEventListener('DOMContentLoaded', updateTvNavbarContentOffset);
 
     // Boot Sequence
     document.addEventListener('DOMContentLoaded', () => {
