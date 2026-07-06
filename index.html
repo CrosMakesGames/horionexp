@@ -9734,6 +9734,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; margin-bottom:16px;">
                         <button type="button" class="btn-secondary" onclick="openTvPlayerFullscreen()">FULLSCREEN</button>
+                        <button type="button" class="btn-secondary" onclick="openTvPlayerLink()">OPEN LINK</button>
                         <button type="button" class="btn-secondary" onclick="refreshTvPlayer()">REFRESH</button>
                         <button type="button" class="btn-secondary" onclick="openTvPlayerInAboutBlank()">OPEN IN ABOUT:BLANK</button>
                     </div>
@@ -9823,6 +9824,12 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
         const providerUrl = getCurrentProviderUrl();
         if (!providerUrl) return;
         launchSite(providerUrl);
+    }
+
+    function openTvPlayerLink() {
+        const providerUrl = getCurrentProviderUrl();
+        if (!providerUrl) return;
+        window.open(providerUrl, '_blank', 'noopener,noreferrer');
     }
 
     function renderEpisodeList() {
