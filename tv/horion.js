@@ -64,15 +64,32 @@
     window.addEventListener('resize', initParticles);
     initParticles(); animateParticles();
 
+    function updateTvNavbarContentOffset() {
+        const nav = document.querySelector('.hud-nav');
+        const isHidden = document.body.classList.contains('navbar-hidden');
+        let offset = isHidden ? 40 : 125;
+
+        if (!isHidden && nav) {
+            const rect = nav.getBoundingClientRect();
+            offset = Math.max(96, Math.ceil(rect.bottom + 32));
+        }
+
+        document.body.style.setProperty('--navbar-content-offset', `${offset}px`);
+    }
+
     function setTvNavbarHidden(isHidden) {
         const shouldHide = Boolean(isHidden);
         document.body.classList.toggle('navbar-hidden', shouldHide);
+        updateTvNavbarContentOffset();
 
         document.querySelectorAll('.nav-collapse-btn').forEach(toggle => {
             toggle.setAttribute('aria-label', shouldHide ? 'Show navbar' : 'Hide navbar');
             toggle.title = shouldHide ? 'Show navbar' : 'Hide navbar';
         });
     }
+
+    window.addEventListener('resize', updateTvNavbarContentOffset);
+    document.addEventListener('DOMContentLoaded', updateTvNavbarContentOffset);
 
     // Boot Sequence
     document.addEventListener('DOMContentLoaded', () => {

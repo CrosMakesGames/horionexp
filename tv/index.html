@@ -25,6 +25,7 @@
             overflow-x: hidden;
             overflow-y: scroll;
             scroll-behavior: smooth;
+            scroll-padding-top: var(--navbar-content-offset, 125px);
         }
 
         /* --- BOOTUP OVERLAY --- */
@@ -174,7 +175,7 @@
         /* --- CONTENT CONTAINER --- */
         .content-container {
             max-width: 1400px;
-            margin: 125px auto 40px;
+            margin: var(--navbar-content-offset, 125px) auto 40px;
             padding: 40px;
             position: relative;
             z-index: 1;
