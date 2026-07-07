@@ -1735,7 +1735,7 @@ function getProviderUrl(imdbId, tmdbId, type, season = null, episode = null) {
     }
 
     if (type === 'movie') {
-        return `https://www.vidsrc.wtf/api/4/movie/?id=${idToUse}`;
+        return `https://www.vidsrc.wtf/api/1/movie/?id=${idToUse}`;
     }
 
     return `https://www.vidsrc.wtf/api/1/tv/?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
