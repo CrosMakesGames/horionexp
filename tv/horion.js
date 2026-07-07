@@ -1537,7 +1537,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
                     <div class="server-bar">
                         <div>
                             <div style="color:white; font-weight:bold;">${episodeTitleText}</div>
-                            <div style="color:var(--text-grey); font-size:0.8rem;">SOURCE: ${state.currentServer === 'server1' ? 'VidLink (S1)' : 'VidSrc (S2)'}</div>
+                            <div style="color:var(--text-grey); font-size:0.8rem;">SOURCE: ${state.currentServer === 'server1' ? 'VidLink 1 (S1)' : 'VidSrc 3 (S2)'}</div>
                         </div>
                         <div style="display:flex; gap:10px;">
                             <button onclick="switchServer('server1')" class="btn-secondary ${state.currentServer === 'server1' ? 'active' : ''}">S1</button>
@@ -1728,17 +1728,17 @@ function getProviderUrl(imdbId, tmdbId, type, season = null, episode = null) {
 
     if (state.currentServer === 'server1') {
         if (type === 'movie') {
-            return `https://vidlink.pro/movie/${idToUse}?primaryColor=0278fd&secondaryColor=a2a2a2&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=false`;
+            return `https://www.vidsrc.wtf/api/1/movie?color=0278fd&id=${idToUse}`;
         }
 
-        return `https://vidlink.pro/tv/${idToUse}/${seasonValue}/${episodeValue}?primaryColor=0278fd&secondaryColor=a2a2a2&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=false`;
+        return `https://www.vidsrc.wtf/api/1/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
     }
 
     if (type === 'movie') {
-        return `https://www.vidsrc.wtf/api/1/movie?id=${idToUse}`;
+        return `https://www.vidsrc.wtf/api/3/movie?color=0278fd&id=${idToUse}`;
     }
-
-    return `https://www.vidsrc.wtf/api/1/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
+    
+    return `https://www.vidsrc.wtf/api/3/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
 }
 
     // https://vidlink.pro/movie/${idToUse}?primaryColor=0278fd&secondaryColor=a2a2a2&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=false
