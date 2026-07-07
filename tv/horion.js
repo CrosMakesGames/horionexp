@@ -1735,10 +1735,10 @@ function getProviderUrl(imdbId, tmdbId, type, season = null, episode = null) {
     }
 
     if (type === 'movie') {
-        return `https://www.vidsrc.wtf/api/1/movie/?id=${idToUse}`;
+        return `https://www.vidsrc.wtf/api/1/movie?id=${idToUse}`;
     }
 
-    return `https://www.vidsrc.wtf/api/1/tv/?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
+    return `https://www.vidsrc.wtf/api/1/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
 }
 
     // https://vidlink.pro/movie/${idToUse}?primaryColor=0278fd&secondaryColor=a2a2a2&iconColor=eefdec&icons=default&player=default&title=true&poster=true&autoplay=true&nextbutton=false
