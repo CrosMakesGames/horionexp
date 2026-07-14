@@ -426,21 +426,6 @@
         <button class="mode-chip" id="mode-tv" data-mode-target="tv" type="button" aria-pressed="false">TV</button>
     </div>
 
-    <div id="announcement-modal-overlay" class="announcement-modal-overlay" aria-hidden="true">
-        <div class="announcement-modal" role="dialog" aria-modal="true" aria-labelledby="announcement-modal-title">
-            <h3 id="announcement-modal-title">Welcome Back...</h3>
-            <div id="announcement-modal-copy" class="announcement-modal-copy">This is gonna be the best school year yet because Horion exists!
-I have been making updates... check in recent updates.
-I'll keep it short this time around, but I added a testing server link so I can live-test new updates, and removed the bug-report form. 
-Instead, join the discord if you can, theres a bug-report, announcments, and gambling. Link is in the page's footer.
-Just keep expecting new updates and versions. Horion is going to grow even more this year.
-    Thanks for using my site,
-    -CrosMakesGames
-            </div>
-            <div class="announcement-modal-actions">
-                <button id="announcement-modal-continue" class="announcement-continue" type="button">Continue</button>
-            </div>
-        </div>
     </div>
 
                 <textarea id="games-app-template" hidden>
@@ -1725,6 +1710,148 @@ canvas {
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-thumb { background: var(--hacker-blue); }
 ::-webkit-scrollbar-track { background: #000; }
+
+        /* ===== FEATURED CAROUSEL ===== */
+        #featured-carousel-wrap {
+            width: 100%;
+            margin-bottom: 28px;
+            position: relative;
+            padding: 0 48px;
+            box-sizing: border-box;
+        }
+        #fc-viewport {
+            overflow: hidden;
+            width: 100%;
+            border-radius: 12px;
+            position: relative;
+        }
+        #fc-track {
+            display: flex;
+            width: 100%;
+            transition: none;
+        }
+        .fc-slide {
+            flex: 0 0 100%;
+            width: 100%;
+            min-height: 190px;
+            display: flex;
+            align-items: stretch;
+            background: rgba(0,0,0,0.55);
+            border: 1px solid rgba(0, 180, 255, 0.14);
+            border-radius: 12px;
+            cursor: pointer;
+            overflow: hidden;
+            user-select: none;
+            transition: border-color 0.2s ease;
+            box-sizing: border-box;
+        }
+        .fc-slide:hover { border-color: rgba(0, 180, 255, 0.38); }
+        .fc-text {
+            flex: 1 1 0;
+            padding: 26px 20px 26px 26px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            text-align: left;
+        }
+        .fc-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text);
+            margin: 0 0 10px 0;
+            line-height: 1.2;
+        }
+        .fc-desc {
+            font-size: 0.86rem;
+            color: var(--muted);
+            line-height: 1.6;
+            margin: 0;
+            max-width: 48ch;
+        }
+        .fc-logo-wrap {
+            flex: 0 0 auto;
+            width: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 22px 18px 10px;
+        }
+        .fc-logo {
+            width: 158px;
+            height: 158px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+            pointer-events: none;
+            filter: drop-shadow(0 6px 20px rgba(0,0,0,0.55));
+        }
+        .fc-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(2, 8, 18, 0.65);
+            border: 1px solid rgba(0, 180, 255, 0.2);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: border-color 0.18s, background 0.18s;
+            backdrop-filter: blur(6px);
+            padding: 0;
+        }
+        .fc-arrow:hover {
+            border-color: rgba(0, 180, 255, 0.55);
+            background: rgba(2, 8, 18, 0.9);
+        }
+        .fc-arrow svg {
+            width: 13px;
+            height: 13px;
+            stroke: #ffffff;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+        .fc-arrow:hover svg { stroke: #ffffff; }
+        .fc-prev { left: 8px; }
+        .fc-next { right: 8px; }
+        .fc-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 7px;
+            margin-top: 12px;
+        }
+        .fc-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(0, 180, 255, 0.22);
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .fc-dot.active {
+            background: var(--accent);
+            transform: scale(1.35);
+        }
+        @media (max-width: 580px) {
+            .fc-logo-wrap { width: 110px; padding: 14px 12px 14px 6px; }
+            .fc-logo { width: 90px; height: 90px; }
+            .fc-text { padding: 18px 12px 18px 16px; }
+            .fc-title { font-size: 0.88rem; }
+            .fc-desc { font-size: 0.78rem; }
+        }
+        /* ===== END FEATURED CAROUSEL ===== */
 </style>
 </head>
 <body>
@@ -1778,12 +1905,17 @@ canvas {
         <div class="recent-changes-container">
             <div class="recent-label">TESTING #1</div>
             <div class="change-log">
-                > Live testing = live updates. So far i have...<br>
+                > Testing #1 is complete. Testing #2 may begin whenever I feel neccesary.<br>
                 > Loads of bug fixes <br>
                 > Overall polishing/outside of Horion stuff<br>
                 > Added minimizing the navbar<br>
                 > Brand new source for TV<br>
-                > NEW YOUTUBE COMPLETELY REVAMPED!!!
+                > NEW YOUTUBE COMPLETELY REVAMPED!!!<br>
+                > New sorting for games <br>
+                > Added a open link button for TV<br>
+                > Added TV server 3<br>
+                > New game carousel for top-notch games<br>
+                > New unreleased tv/movie detection
             </div>
         </div>
     </div>
@@ -1806,9 +1938,56 @@ canvas {
 </div>
 
 <div id="view-featured" class="view-section">
+    
     <div class="content-container">
+        <div id="featured-carousel-wrap">
+            <button class="fc-arrow fc-prev" id="fc-prev" aria-label="Previous" onclick="fcPrev()">
+                <svg viewBox="0 0 14 14"><polyline points="9 2 4 7 9 12"/></svg>
+            </button>
+
+            <div id="fc-viewport" style="overflow:hidden;width:100%;border-radius:12px;position:relative;">
+                <div id="fc-track" class="fc-track">
+                    <div class="fc-slide" data-fc-name="Horion Party" onclick="fcOpenGame(this)">
+                        <div class="fc-text">
+                            <p class="fc-title">Horion Party</p>
+                            <p class="fc-desc">Play a variety of online party games, made specifically for Horion. Created by CMG.</p>
+                        </div>
+                        <div class="fc-logo-wrap">
+                            <img class="fc-logo" src="horionpartythumbnail.png" alt="" draggable="false">
+                        </div>
+                    </div>
+                    <div class="fc-slide" data-fc-name="Balatro" onclick="fcOpenGame(this)">
+                        <div class="fc-text">
+                            <p class="fc-title">Balatro</p>
+                            <p class="fc-desc">I know old Balatro sucked and wasn't real Balatro but this new update basically makes it real Balatro. Try it out!</p>
+                        </div>
+                        <div class="fc-logo-wrap">
+                            <img class="fc-logo" src="https://play-lh.googleusercontent.com/RSPv_SMlA3Lun8VHaJD7xCBQg29eCJR9sNJtZNJGlybVs8byYVLz4WnohrbLScC9srg" alt="" draggable="false">
+                        </div>
+                    </div>
+                    <div class="fc-slide" data-fc-name="skribbl.io" onclick="fcOpenGame(this)">
+                        <div class="fc-text">
+                            <p class="fc-title">skribbl.io</p>
+                            <p class="fc-desc">Draw or guess in this party/online guessing game!</p>
+                        </div>
+                        <div class="fc-logo-wrap">
+                            <img class="fc-logo" src="https://brain-lines.io/data/image/game/skribbl-io-b1.jpg" alt="" draggable="false">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="fc-arrow fc-next" id="fc-next" aria-label="Next" onclick="fcNext()">
+                <svg viewBox="0 0 14 14"><polyline points="5 2 10 7 5 12"/></svg>
+            </button>
+
+            <div id="fc-dots" class="fc-dots">
+                <!-- Dots auto-generated by JS -->
+            </div>
+        </div>
         <input type="text" id="searchFeatured" placeholder="SEARCH FEATURED..." autocomplete="off" spellcheck="false">
         <h3 class="featured-note">Featured games with a W in the top left are web games and may not work if your teacher is watching you on Securly/GoGuardian.</h3>
+        
         <div class="featured-sort-controls">
             <button id="sort-btn" class="sort-button" onclick="toggleSort()">
                 Sort: Alphabetical
@@ -1905,7 +2084,7 @@ canvas {
             Horion is a comprehensive database designed to catalog and feature the best games available. Website is created by CMG to ensure fun and provide a streamlined user experience.
         </p>
         <p>
-            If you encounter bugs, broken links, or visual glitches, please refer to the Google Doc for links and status, or request a bug fix through the form.
+            If you encounter bugs, broken links, or visual glitches, please refer to the Discord for links and status.
         </p>
     </div>
 
@@ -1917,7 +2096,7 @@ canvas {
         </div>
         </p><br><br>
         <a href="https://bit.ly/horiongames" target="_blank" class="credit-link">> Links Document</a>
-        <a href="https://crosmakesgames.github.io/horion/" target="_blank" rel="noopener noreferrer" class="credit-link">> Main Branch</a>
+        <a href="https://horion.crosmakesgames.com" target="_blank" rel="noopener noreferrer" class="credit-link">> Main Branch</a>
     </div>
 </div>
 </div>
@@ -1932,7 +2111,7 @@ canvas {
             <a href="https://www.tiktok.com/@horionunblockedgames?lang=en" target="_blank" rel="noopener noreferrer">TikTok</a>
             <a href="https://discord.gg/5dTP5SbafH" target="_blank" rel="noopener noreferrer">Discord</a> 
             | 
-            <a href="https://crosmakesgames.github.io" target="_blank" rel="noopener noreferrer">crosmakesgames.github.io</a>
+            <a href="https://crosmakesgames.com" target="_blank" rel="noopener noreferrer">crosmakesgames.com</a>
         </div>
     </div>
 </footer>
@@ -1941,7 +2120,7 @@ canvas {
     // ==========================================
     // 1. DATA CONFIGURATION
     // ==========================================
-    const OFFICIAL_GITHUB_URL = 'https://crosmakesgames.github.io/horion/';
+    const OFFICIAL_GITHUB_URL = 'https://horion.crosmakesgames.com';
     const DATABASE_GAME_BASE_URL = 'https://crosmakesgames.github.io/ugs-singlefile/UGS-Files/';
     const PORTAL_DOC_URL = 'https://bit.ly/horiongames';
     let launchedFromAboutBlankBridge = false;
@@ -2056,7 +2235,7 @@ canvas {
 
   { filename: 'clgunknight', displayname: 'Gun Knight', desc: 'Gun Knight is a roguelite shooter combining platforming combat with gun-based enemies.', image: 'https://img.itch.zone/aW1nLzI4ODgzOTMuanBn/original/nBtxWN.jpg', recommended: ['Krunker', 'ev.io', 'Zombs Royale'] },
 
-    { filename: 'clgunblood', displayname: 'Gun Blood', desc: 'Gun Blood is a Western quick-draw dueling game focused on reaction speed.', image: 'https://pizzaedition.win/images/games/gunblood-min.jpeg', recommended: ['Western Roulette', '10 Bullets', 'Gun Spin'] },
+    { filename: 'clgunblood', displayname: 'Gun Blood', desc: 'Gun Blood is a Western quick-draw dueling game focused on reaction speed.', image: 'https://static.keygames.com/6/113206/93718/672x448/gun-blood-remastered.webp', recommended: ['Western Roulette', '10 Bullets', 'Gun Spin'] },
 
   { filename: 'https://polytrackonline.gitlab.io/poly-track/', displayname: 'Polytrack', desc: 'Polytrack is a low-poly racing game focused on time trials and track building.', image: 'https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/3fa3556b61d02fba189999605b1f304b/polytrack.png', recommended: ['Drive Mad', 'Drift Boss', 'Highway Racer'], type: 'web' },
 
@@ -2068,15 +2247,15 @@ canvas {
 
   { filename: 'cldriftboss', displayname: 'Drift Boss', desc: 'Drift Boss is a one-button drifting game focused on timing turns on narrow tracks.', image: 'https://play-lh.googleusercontent.com/Zu0LoruCtIG45qs6iffZkWqGTuzEWflNoH8TNRtfMJ2NGgJxQGfw8kqSrxKtXGjPqeqFLNsnubW6EnPUJvOi8g=w240-h480-rw', recommended: ['Drive Mad', 'Polytrack', 'Highway Racer'] },
 
-  { filename: 'https://embed.stacktris.net/stacktris/', displayname: 'Stacktris', desc: 'Stacktris is a physics-based stacking puzzle inspired by Tetris with unstable block placement.', image: 'https://pizzaedition.win/images/games/stacktris-min.png', recommended: ['Tetris', '2048', 'Shapez.io'], type: 'web' },
+  { filename: 'https://embed.stacktris.net/stacktris/', displayname: 'Stacktris', desc: 'Stacktris is a physics-based stacking puzzle inspired by Tetris with unstable block placement.', image: 'https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/ba04eca05c362b04deec44651e86e39a/stacktris-logo.png', recommended: ['Tetris', '2048', 'Shapez.io'], type: 'web' },
 
-  { filename: 'clFNAF', displayname: 'FNAF', desc: 'Five Nights at Freddy’s is a survival horror game where you monitor animatronics through cameras.', image: 'https://pizzaedition.win/images/games/fnaf-min.jpg', recommended: ['Fnaf 2', 'Fnaf 3', 'Fnaf 4'] },
+  { filename: 'clFNAF', displayname: 'FNAF', desc: 'Five Nights at Freddy’s is a survival horror game where you monitor animatronics through cameras.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdU0uPditzaMTGXEU9eNHxthRSBwt2_lNTYCZVlJI3P2xfIsWyAeAB7NrB&s=10', recommended: ['Fnaf 2', 'Fnaf 3', 'Fnaf 4'] },
 
-  { filename: 'clFNAF2', displayname: 'Fnaf 2', desc: 'FNAF 2 is a survival horror game with more animatronics and limited defensive tools.', image: 'https://pizzaedition.win/images/games/fnaf2-min.png', recommended: ['FNAF', 'Fnaf 3', 'Fnaf 4'] },
+  { filename: 'clFNAF2', displayname: 'Fnaf 2', desc: 'FNAF 2 is a survival horror game with more animatronics and limited defensive tools.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6f0hYAbNEHcNH70nEmdSXSOjbSViqeVeZwtmdbObflsKMvwZ6lPnfkp0&s=10', recommended: ['FNAF', 'Fnaf 3', 'Fnaf 4'] },
 
-  { filename: 'clFNAF3', displayname: 'Fnaf 3', desc: 'FNAF 3 is a horror survival game focused on managing systems while avoiding Springtrap.', image: 'https://pizzaedition.win/images/games/fnaf3-min.jpg', recommended: ['FNAF', 'Fnaf 2', 'Fnaf 4'] },
+  { filename: 'clFNAF3', displayname: 'Fnaf 3', desc: 'FNAF 3 is a horror survival game focused on managing systems while avoiding Springtrap.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNhxJEaZZxCZVM457Gf4zepPtlsYsazXLizdnyvNA5qDsWRta-Rtd5zGk&s=10', recommended: ['FNAF', 'Fnaf 2', 'Fnaf 4'] },
 
-  { filename: 'clFNAF4', displayname: 'Fnaf 4', desc: 'FNAF 4 is a horror game focused on listening and reacting to threats in a bedroom setting.', image: 'https://pizzaedition.win/images/games/fnaf4-min.png', recommended: ['FNAF', 'Fnaf 2', 'Fnaf 3'] },
+  { filename: 'clFNAF4', displayname: 'Fnaf 4', desc: 'FNAF 4 is a horror game focused on listening and reacting to threats in a bedroom setting.', image: 'https://image.api.playstation.com/vulcan/img/cfn/11307lJXV6jMrabrKwzNFK94riCQC90Ogs2z0X1LWyX9oDA0W1zmbIw3V-eLTiw-q-kW_7MfwoEOQH-ZEVPPuRX1gDM0TYhw.png', recommended: ['FNAF', 'Fnaf 2', 'Fnaf 3'] },
 
   { filename: 'https://svaaps.github.io/eaglercrafthtml/', displayname: 'Minecraft 1.9', desc: 'Minecraft 1.9 is a sandbox survival game focused on building, exploration, and combat updates.', image: 'https://media.sketchfab.com/models/84938a8f3f8d4a0aa64aaa9c4e4d27d3/thumbnails/f5d49a3c2cdb4424b7f062d340d2a4a7/aafef2fcd26b40f5bea48725065c6542.jpeg', type: 'web', recommended: ['Sandboxels', 'Shapez.io', 'Space Company'] },
 
@@ -2106,7 +2285,7 @@ canvas {
 
     { filename: 'clclearvision5', displayname: 'Clear Vison 5', desc: 'Clear Vision 5 is a sniper puzzle shooter focused on precision assassination missions.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy2Iu956dpwbGBtg7de73Ooxh6eEv-QemA_Q&s', recommended: ['Gun Blood', 'Western Roulette', '10 Bullets'] },
 
-  { filename: 'clrocketleague', displayname: 'RL Sideswipe', desc: 'RL Sideswipe is a 2D Rocket League game focused on aerial car soccer mechanics.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6PanXiNaRnXnhc58bDbZfhufnj8T3OhdTMw&s', recommended: ['Smash Karts', 'Kart Bros', 'Drift Boss'] },
+  { filename: 'https://rocketgoal.io', displayname: 'Rocket Goal', type: 'web', desc: 'Rocket Goal is a 3D Rocket League ripoff focused on aerial car soccer mechanics.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6PanXiNaRnXnhc58bDbZfhufnj8T3OhdTMw&s', recommended: ['Smash Karts', 'Kart Bros', 'Drift Boss'] },
 
   { filename: 'clfridaynightfunkin', displayname: 'Friday Night Funkin', desc: 'Friday Night Funkin is a rhythm game where you hit notes in time with music battles.', image: 'https://i.pinimg.com/736x/96/ae/27/96ae27dbe3a47d8c107f310576e1bc99.jpg', recommended: ['3 Dash', 'OVO', 'Level Devil'] },
 
@@ -2171,8 +2350,9 @@ canvas {
   { filename: 'https://crosmakesgames.github.io/2048/', displayname: "2048", desc: '2048 is a number puzzle game where you merge tiles to reach 2048.', image: 'https://upload.wikimedia.org/wikipedia/commons/1/18/2048_logo.svg', type: 'web', recommended: ['Stacktris', 'Tetris', 'Cookie Clicker'] },
 
     { filename: 'clpapaswingeria', displayname: "Papa's Wingeria", desc: 'Papa\'s Wingeria is a restaurant management game where you cook and serve wings.', image: 'https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/0ef4d3c4bd35cc2e9b65f3da07448fc2/papas-wingeria.jfif', recommended: ['Papa\'s Cheeseria', 'Burrito Bison: Launcha Libre', 'Cookie Clicker'] },
+    { filename: 'https://badparentingame.io/play/buckshot-roulette/', displayname: "Buckshot Roulette", desc: 'Shoot yourself or the dealer in this russian-roulette with shotguns game.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyFj5uK14h_47xiDyyzMipCpRvNfY3XcTtPeABOTxluQ&s=10', type:'web', recommended: ['Balatro', 'Space Company', 'Shapez.io'] },
+    { filename: 'https://horionparty.crosmakesgames.com', displayname: "Horion Party", desc: 'Play a variety of online party games, made specifically for Horion. Created by CMG.', image: 'horionpartythumbnail.png', type:'web', recommended: ['8 Ball: Classic', 'Gartic Phone', 'Skribbl.io'] },
 ];
-
     const FEATURED_GENRES = ['Rougelike', 'Action', 'Strategy', 'Platformer'];
     const FEATURED_GENRE_BY_NAME = {
         '8 Ball: Classic': 'Strategy',
@@ -2254,7 +2434,9 @@ canvas {
         'Lordz.io': 'Strategy',
         'Slither.io': 'Action',
         'Zombs Royale': 'Action',
-        'Zombs.io': 'Strategy'
+        'Zombs.io': 'Action',
+        'Buckshot Roulette': 'Strategy',
+        'Horion Party': 'Strategy',
     };
 
     function getFeaturedGenre(game) {
@@ -7167,6 +7349,84 @@ function openSpecial(gamelink, gameTitle) {
         }, 30);
     });
 
+
+    /* ===== FEATURED CAROUSEL ===== */
+    (function () {
+        var fcIndex = 0;
+        var fcInterval = null;
+        var fcAnimating = false;
+
+        function fcSlides() {
+            return Array.from(document.querySelectorAll('#fc-track .fc-slide'));
+        }
+
+        function fcTotal() { return fcSlides().length; }
+
+        function fcBuildDots() {
+            var wrap = document.getElementById('fc-dots');
+            if (!wrap) return;
+            wrap.innerHTML = '';
+            fcSlides().forEach(function (_, i) {
+                var d = document.createElement('button');
+                d.className = 'fc-dot' + (i === 0 ? ' active' : '');
+                d.setAttribute('aria-label', 'Slide ' + (i + 1));
+                d.addEventListener('click', function () { fcGoTo(i, true); });
+                wrap.appendChild(d);
+            });
+        }
+
+        function fcUpdateDots() {
+            document.querySelectorAll('#fc-dots .fc-dot').forEach(function (d, i) {
+                d.classList.toggle('active', i === fcIndex);
+            });
+        }
+
+        function fcGoTo(idx, resetTimer) {
+            if (fcAnimating) return;
+            var total = fcTotal();
+            if (total === 0) return;
+            fcIndex = ((idx % total) + total) % total;
+            var track = document.getElementById('fc-track');
+            if (!track) return;
+            fcAnimating = true;
+            track.style.transition = 'transform 0.42s cubic-bezier(0.4,0,0.2,1)';
+            track.style.transform = 'translateX(-' + (fcIndex * 100) + '%)';
+            setTimeout(function () { fcAnimating = false; }, 460);
+            fcUpdateDots();
+            if (resetTimer) fcResetTimer();
+        }
+
+        window.fcPrev = function () { fcGoTo(fcIndex - 1, true); };
+        window.fcNext = function () { fcGoTo(fcIndex + 1, true); };
+
+        window.fcOpenGame = function (el) {
+            if (typeof openFeaturedGamePage !== 'function' || typeof featuredGames === 'undefined') return;
+            var name = el && el.getAttribute ? el.getAttribute('data-fc-name') : el;
+            if (!name) return;
+            var nameLower = String(name).trim().toLowerCase();
+            var game = featuredGames.find(function (g) {
+                return String(g.displayname || '').trim().toLowerCase() === nameLower;
+            });
+            if (game) openFeaturedGamePage(game);
+        };
+
+        function fcResetTimer() {
+            if (fcInterval) clearInterval(fcInterval);
+            fcInterval = setInterval(function () { fcGoTo(fcIndex + 1, false); }, 8000);
+        }
+
+        function fcInit() {
+            fcBuildDots();
+            fcResetTimer();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', fcInit);
+        } else {
+            setTimeout(fcInit, 0);
+        }
+    })();
+    /* ===== END FEATURED CAROUSEL ===== */
 </script>
 
 </body>
@@ -7386,6 +7646,38 @@ function openSpecial(gamelink, gameTitle) {
             transform: translateY(-10px);
             border-color: var(--neon-blue);
             box-shadow: 0 0 25px rgba(0, 112, 255, 0.2);
+        }
+
+        .tv-card-unreleased {
+            cursor: default;
+            border-color: rgba(255,255,255,0.07) !important;
+        }
+
+        .tv-card-unreleased img {
+            filter: grayscale(1) brightness(0.38);
+        }
+
+        .tv-card-unreleased:hover {
+            transform: none !important;
+            border-color: rgba(255,255,255,0.07) !important;
+            box-shadow: none !important;
+        }
+
+        .tv-card-unreleased-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 4;
+            background: rgba(0,0,0,0.72);
+            border: 1px solid rgba(255,255,255,0.18);
+            color: #888;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 3px 7px;
+            border-radius: 3px;
         }
 
         .tv-card img {
@@ -8353,7 +8645,7 @@ function openSpecial(gamelink, gameTitle) {
             <a href="https://www.tiktok.com/@horionunblockedgames?lang=en" target="_blank" rel="noopener noreferrer">TikTok</a>
             <a href="https://discord.gg/5dTP5SbafH" target="_blank" rel="noopener noreferrer">Discord</a> 
             | 
-            <a href="https://crosmakesgames.github.io" target="_blank" rel="noopener noreferrer">crosmakesgames.github.io</a>
+            <a href="https://crosmakesgames.com" target="_blank" rel="noopener noreferrer">crosmakesgames.com</a>
         </div>
     </div>
 </footer>
@@ -8650,8 +8942,10 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
 
     function normalizeTMDB(item) {
         if (item.media_type !== 'movie' && item.media_type !== 'tv') return null;
-        const year = (item.release_date || item.first_air_date || '').split('-')[0] || '';
+        const rawDate = item.release_date || item.first_air_date || '';
+        const year = rawDate.split('-')[0] || '';
         const hasRating = typeof item.vote_average === 'number' && item.vote_average > 0;
+        const isUnreleased = !hasRating && (!rawDate || new Date(rawDate) > new Date());
         return {
             id: item.id,
             type: item.media_type,
@@ -8660,7 +8954,8 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
             rating: hasRating ? item.vote_average.toFixed(1) : '',
             summary: item.overview,
             poster: item.poster_path ? `${IMG_BASE}${item.poster_path}` : state.posterFallback,
-            backdrop: item.backdrop_path ? `${IMG_ORIGINAL}${item.backdrop_path}` : state.heroFallback
+            backdrop: item.backdrop_path ? `${IMG_ORIGINAL}${item.backdrop_path}` : state.heroFallback,
+            unreleased: isUnreleased
         };
     }
 
@@ -9891,15 +10186,22 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
        
         shows.forEach(show => {
             const card = document.createElement('div');
-            card.className = 'tv-card';
-            card.onclick = () => router('details', { id: show.id, type: show.type });
-            const metaParts = [show.year, show.rating ? `RATING ${show.rating}` : '', (show.type || '').toUpperCase()].filter(Boolean);
+            const isUnreleased = show.unreleased === true;
+            card.className = 'tv-card' + (isUnreleased ? ' tv-card-unreleased' : '');
+            if (!isUnreleased) {
+                card.onclick = () => router('details', { id: show.id, type: show.type });
+            }
+            const metaParts = isUnreleased
+                ? [show.year || 'UNRELEASED', (show.type || '').toUpperCase()]
+                : [show.year, show.rating ? `RATING ${show.rating}` : '', (show.type || '').toUpperCase()].filter(Boolean);
+            const metaStyle = isUnreleased ? 'color:#888; font-style:italic;' : '';
            
             card.innerHTML = `
                 <img src="${show.poster}" loading="lazy">
+                ${isUnreleased ? '<div class="tv-card-unreleased-badge">UNRELEASED</div>' : ''}
                 <div class="card-overlay">
                     <div class="tv-title">${show.title}</div>
-                    <div class="tv-meta">${metaParts.join(' | ')}</div>
+                    <div class="tv-meta" style="${metaStyle}">${metaParts.join(' | ')}</div>
                 </div>
             `;
             container.appendChild(card);
@@ -9984,7 +10286,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
                     <div class="server-bar">
                         <div>
                             <div style="color:white; font-weight:bold;">${episodeTitleText}</div>
-                            <div style="color:var(--text-grey); font-size:0.8rem;">SOURCE: ${state.currentServer === 'server1' ? 'VidSrc 1 (S1)' : state.currentServer === 'server2' ? 'VidSrc 3 (S2)' : 'VidSrcMe (S3)'}</div>
+                            <div style="color:var(--text-grey); font-size:0.8rem;">SOURCE: ${state.currentServer === 'server1' ? 'VidSrc 3 (S1)' : state.currentServer === 'server2' ? 'VidSrc 1 (S2)' : 'VidSrcMe (S3)'}</div>
                         </div>
                         <div style="display:flex; gap:10px;">
                             <button onclick="switchServer('server1')" class="btn-secondary ${state.currentServer === 'server1' ? 'active' : ''}">S1</button>
@@ -10161,18 +10463,18 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
 
         if (state.currentServer === 'server1') {
             if (type === 'movie') {
-                return `https://www.vidsrc.wtf/api/1/movie?color=0278fd&id=${idToUse}`;
-            }
-
-            return `https://www.vidsrc.wtf/api/1/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
-        }
-
-        if (state.currentServer === 'server2') {
-            if (type === 'movie') {
                 return `https://www.vidsrc.wtf/api/3/movie?color=0278fd&id=${idToUse}`;
             }
 
             return `https://www.vidsrc.wtf/api/3/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
+        }
+
+        if (state.currentServer === 'server2') {
+            if (type === 'movie') {
+                return `https://www.vidsrc.wtf/api/1/movie?color=0278fd&id=${idToUse}`;
+            }
+
+            return `https://www.vidsrc.wtf/api/1/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
         }
 
         const tmdbOnlyId = encodeURIComponent(String(tmdbId || ''));
@@ -11618,6 +11920,7 @@ function openOriginalSports(event) {
         }
 
         init();
+    
     </script>
 </body>
 </html>
