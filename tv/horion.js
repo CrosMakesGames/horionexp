@@ -89,6 +89,18 @@
     }
 
     window.addEventListener('resize', updateTvNavbarContentOffset);
+    // Unreleased card styles
+    (function() {
+        const s = document.createElement('style');
+        s.textContent = `
+        .tv-card-unreleased { cursor: default !important; border-color: rgba(255,255,255,0.07) !important; }
+        .tv-card-unreleased img { filter: grayscale(1) brightness(0.38); }
+        .tv-card-unreleased:hover { transform: none !important; border-color: rgba(255,255,255,0.07) !important; box-shadow: none !important; }
+        .tv-card-unreleased-badge { position:absolute; top:8px; left:8px; z-index:4; background:rgba(0,0,0,0.72); border:1px solid rgba(255,255,255,0.18); color:#888; font-family:'JetBrains Mono',monospace; font-size:0.6rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:3px 7px; border-radius:3px; }
+        `;
+        document.head.appendChild(s);
+    })();
+
     document.addEventListener('DOMContentLoaded', updateTvNavbarContentOffset);
 
     // Boot Sequence
@@ -289,8 +301,10 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
 
     function normalizeTMDB(item) {
         if (item.media_type !== 'movie' && item.media_type !== 'tv') return null;
-        const year = (item.release_date || item.first_air_date || '').split('-')[0] || '';
+        const rawDate = item.release_date || item.first_air_date || '';
+        const year = rawDate.split('-')[0] || '';
         const hasRating = typeof item.vote_average === 'number' && item.vote_average > 0;
+        const isUnreleased = !hasRating && (!rawDate || new Date(rawDate) > new Date());
         return {
             id: item.id,
             type: item.media_type,
@@ -299,7 +313,8 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
             rating: hasRating ? item.vote_average.toFixed(1) : '',
             summary: item.overview,
             poster: item.poster_path ? `${IMG_BASE}${item.poster_path}` : state.posterFallback,
-            backdrop: item.backdrop_path ? `${IMG_ORIGINAL}${item.backdrop_path}` : state.heroFallback
+            backdrop: item.backdrop_path ? `${IMG_ORIGINAL}${item.backdrop_path}` : state.heroFallback,
+            unreleased: isUnreleased
         };
     }
 
@@ -1444,15 +1459,22 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
         
         shows.forEach(show => {
             const card = document.createElement('div');
-            card.className = 'tv-card';
-            card.onclick = () => router('details', { id: show.id, type: show.type });
-            const metaParts = [show.year, show.rating ? `RATING ${show.rating}` : '', (show.type || '').toUpperCase()].filter(Boolean);
+            const isUnreleased = show.unreleased === true;
+            card.className = 'tv-card' + (isUnreleased ? ' tv-card-unreleased' : '');
+            if (!isUnreleased) {
+                card.onclick = () => router('details', { id: show.id, type: show.type });
+            }
+            const metaParts = isUnreleased
+                ? [show.year || 'UNRELEASED', (show.type || '').toUpperCase()]
+                : [show.year, show.rating ? `RATING ${show.rating}` : '', (show.type || '').toUpperCase()].filter(Boolean);
+            const metaStyle = isUnreleased ? 'color:#888; font-style:italic;' : '';
             
             card.innerHTML = `
                 <img src="${show.poster}" loading="lazy">
+                ${isUnreleased ? '<div class="tv-card-unreleased-badge">UNRELEASED</div>' : ''}
                 <div class="card-overlay">
                     <div class="tv-title">${show.title}</div>
-                    <div class="tv-meta">${metaParts.join(' | ')}</div>
+                    <div class="tv-meta" style="${metaStyle}">${metaParts.join(' | ')}</div>
                 </div>
             `;
             container.appendChild(card);
@@ -1537,7 +1559,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
                     <div class="server-bar">
                         <div>
                             <div style="color:white; font-weight:bold;">${episodeTitleText}</div>
-                            <div style="color:var(--text-grey); font-size:0.8rem;">SOURCE: ${state.currentServer === 'server1' ? 'VidLink 1 (S1)' : state.currentServer === 'server2' ? 'VidSrc 3 (S2)' : 'VidSrcMe (S3)'}</div>
+                            <div style="color:var(--text-grey); font-size:0.8rem;">SOURCE: ${state.currentServer === 'server1' ? 'VidSrc 3 (S1)' : state.currentServer === 'server2' ? 'VidSrc 1 (S2)' : 'VidSrcMe (S3)'}</div>
                         </div>
                         <div style="display:flex; gap:10px;">
                             <button onclick="switchServer('server1')" class="btn-secondary ${state.currentServer === 'server1' ? 'active' : ''}">S1</button>
@@ -1729,18 +1751,18 @@ function getProviderUrl(imdbId, tmdbId, type, season = null, episode = null) {
 
     if (state.currentServer === 'server1') {
         if (type === 'movie') {
-            return `https://www.vidsrc.wtf/api/1/movie?color=0278fd&id=${idToUse}`;
-        }
-
-        return `https://www.vidsrc.wtf/api/1/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
-    }
-
-    if (state.currentServer === 'server2') {
-        if (type === 'movie') {
             return `https://www.vidsrc.wtf/api/3/movie?color=0278fd&id=${idToUse}`;
         }
 
         return `https://www.vidsrc.wtf/api/3/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
+    }
+
+    if (state.currentServer === 'server2') {
+        if (type === 'movie') {
+            return `https://www.vidsrc.wtf/api/1/movie?color=0278fd&id=${idToUse}`;
+        }
+
+        return `https://www.vidsrc.wtf/api/1/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
     }
 
     const tmdbOnlyId = encodeURIComponent(String(tmdbId || ''));
