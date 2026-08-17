@@ -1,7 +1,18 @@
 const gamesTemplate = document.getElementById('games-app-template');
         const tvTemplate = document.getElementById('tv-app-template');
-        const GAMES_APP_HTML = gamesTemplate.value || gamesTemplate.textContent || '';
-        const TV_APP_HTML = tvTemplate.value || tvTemplate.textContent || '';
+        // Inject a <base> tag so relative URLs (e.g. assets/*.png) resolve correctly
+        // inside the srcdoc iframe context.
+        var _pageBase = window.location.href.split('#')[0];
+        function _injectBase(htmlStr) {
+            if (!htmlStr) return htmlStr;
+            var baseTag = '<base href="' + _pageBase + '">';
+            if (/<head[^>]*>/i.test(htmlStr)) {
+                return htmlStr.replace(/<head[^>]*>/i, function(m) { return m + baseTag; });
+            }
+            return baseTag + htmlStr;
+        }
+        const GAMES_APP_HTML = _injectBase(gamesTemplate.value || gamesTemplate.textContent || '');
+        const TV_APP_HTML = _injectBase(tvTemplate.value || tvTemplate.textContent || '');
 
         const model = {
             mode: 'games',
@@ -787,11 +798,22 @@ const gamesTemplate = document.getElementById('games-app-template');
             updateShellTitle();
         };
 
+        function pauseActiveTvMedia() {
+            withFrame('tv-frame', (win) => {
+                if (typeof win.pauseActiveTvMedia === 'function') {
+                    win.pauseActiveTvMedia();
+                }
+            });
+        }
+
         function switchMode(targetMode, shouldPush = true) {
             if (!validModes.has(targetMode)) return;
             if (targetMode === model.mode) return;
 
             const fromMode = model.mode;
+            if (fromMode === 'tv' && targetMode !== 'tv') {
+                pauseActiveTvMedia();
+            }
 
             setTrackSettled(false);
             syncTrackTransform(false, fromMode);
@@ -899,11 +921,105 @@ const gamesTemplate = document.getElementById('games-app-template');
                 if (model.mode === 'games') {
                     navigateGames(model.currentGamesView, model.currentGamesPage);
                 } else {
+                    pauseActiveTvMedia();
                     navigateTv(model.currentTvView, model.currentTvDetails);
                 }
             });
 
             setInterval(enforceShellLayoutIntegrity, 1200);
         }
+
+        // ===== SCHOOL MODE =====
+        window.schoolMode = false;
+
+        // Global: applies school mode to all iframes + toggles exit dock
+        function applySchoolModeToFrames(mode) {
+            window.schoolMode = mode;
+            var gamesFrame = document.getElementById('games-frame');
+            if (gamesFrame && gamesFrame.contentWindow) {
+                try {
+                    if (typeof gamesFrame.contentWindow.applySchoolMode === 'function') {
+                        gamesFrame.contentWindow.applySchoolMode(mode);
+                    }
+                } catch (e) {}
+            }
+            var tvFrame = document.getElementById('tv-frame');
+            if (tvFrame && tvFrame.contentWindow) {
+                try {
+                    if (typeof tvFrame.contentWindow.applySchoolMode === 'function') {
+                        tvFrame.contentWindow.applySchoolMode(mode);
+                    }
+                } catch (e) {}
+            }
+        }
+
+        // Called by the games iframe when its boot animation finishes
+        window.showSchoolPopup = function() {
+            // Check if user opted out
+            try {
+                if (localStorage.getItem('horion_school_popup_off') === '1') return;
+            } catch(e) {}
+
+            var overlay = document.getElementById('school-mode-popup');
+            if (!overlay) return;
+            overlay.style.display = 'flex';
+            overlay.classList.add('active');
+
+            var enterBtn = document.getElementById('school-mode-enter');
+            var normalBtn = document.getElementById('school-mode-normal');
+            var dontShowBtn = document.getElementById('school-mode-dontshow');
+
+            function dismiss(enteredSchool) {
+                overlay.classList.remove('active');
+                overlay.style.display = 'none';
+                applySchoolModeToFrames(enteredSchool);
+            }
+
+            // Remove old listeners by cloning nodes
+            if (enterBtn) {
+                var newEnter = enterBtn.cloneNode(true);
+                enterBtn.parentNode.replaceChild(newEnter, enterBtn);
+                newEnter.addEventListener('click', function() { dismiss(true); });
+            }
+            if (normalBtn) {
+                var newNormal = normalBtn.cloneNode(true);
+                normalBtn.parentNode.replaceChild(newNormal, normalBtn);
+                newNormal.addEventListener('click', function() { dismiss(false); });
+            }
+            if (dontShowBtn) {
+                var newDont = dontShowBtn.cloneNode(true);
+                dontShowBtn.parentNode.replaceChild(newDont, dontShowBtn);
+                newDont.addEventListener('click', function() {
+                    try { localStorage.setItem('horion_school_popup_off', '1'); } catch(e) {}
+                    dismiss(false);
+                });
+            }
+        };
+
+        // Apply school mode when frames finish loading
+        (function() {
+            var gamesFrameEl = document.getElementById('games-frame');
+            if (gamesFrameEl) {
+                gamesFrameEl.addEventListener('load', function() {
+                    setTimeout(function() {
+                        var f = document.getElementById('games-frame');
+                        if (f && f.contentWindow && typeof f.contentWindow.applySchoolMode === 'function') {
+                            try { f.contentWindow.applySchoolMode(window.schoolMode); } catch(e) {}
+                        }
+                    }, 100);
+                });
+            }
+            var tvFrameEl = document.getElementById('tv-frame');
+            if (tvFrameEl) {
+                tvFrameEl.addEventListener('load', function() {
+                    setTimeout(function() {
+                        var f = document.getElementById('tv-frame');
+                        if (f && f.contentWindow && typeof f.contentWindow.applySchoolMode === 'function') {
+                            try { f.contentWindow.applySchoolMode(window.schoolMode); } catch(e) {}
+                        }
+                    }, 100);
+                });
+            }
+        })();
 
         init();

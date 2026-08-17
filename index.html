@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Horion</title>
-    <link rel="icon" href="favicon.ico" sizes="any">
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" href="assets/favicon.ico" sizes="any">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -21,13 +21,13 @@
         }
 
         body[data-mode="games"] {
-            --bg: #020504;
-            --panel: rgba(6, 12, 8, 0.6);
-            --panel-border: rgba(40, 255, 140, 0.18);
-            --text: #ecffee;
-            --muted: #86b998;
-            --accent: #34ff9a;
-            --accent-soft: rgba(52, 255, 154, 0.15);
+            --bg: #020408;
+            --panel: rgba(0, 0, 0, 0.56);
+            --panel-border: rgba(0, 180, 255, 0.2);
+            --text: #e8f6ff;
+            --muted: #7da8c2;
+            --accent: #00b4ff;
+            --accent-soft: rgba(0, 180, 255, 0.16);
         }
 
         body[data-mode="tv"] {
@@ -92,6 +92,7 @@
             border-radius: 999px;
             border: 1px solid var(--panel-border);
             background: rgba(2, 8, 18, 0.7);
+            -webkit-backdrop-filter: blur(10px);;
             backdrop-filter: blur(10px);
             box-shadow: 0 14px 30px rgba(0, 0, 0, 0.38);
         }
@@ -133,6 +134,7 @@
             justify-content: center;
             padding: 18px;
             background: rgba(1, 8, 16, 0.68);
+            -webkit-backdrop-filter: blur(4px);;
             backdrop-filter: blur(4px);
         }
 
@@ -142,12 +144,9 @@
 
         .beta-modal {
             width: min(700px, 100%);
-            border: 1px solid rgba(52, 255, 154, 0.34);
+            border: 1px solid rgba(0, 180, 255, 0.28);
             border-radius: 16px;
-            background:
-                radial-gradient(circle at 82% 12%, rgba(52, 255, 154, 0.16), transparent 42%),
-                radial-gradient(circle at 12% 88%, rgba(0, 178, 255, 0.14), transparent 48%),
-                linear-gradient(160deg, rgba(4, 14, 20, 0.98), rgba(10, 22, 16, 0.96));
+            background: rgba(2, 6, 12, 0.96);
             box-shadow: 0 30px 56px rgba(0, 0, 0, 0.5);
             padding: 26px 24px;
             color: var(--text);
@@ -158,7 +157,7 @@
             font-size: 1.3rem;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: #dfffe9;
+            color: #e8f6ff;
         }
 
         .beta-modal p {
@@ -196,9 +195,9 @@
         }
 
         .beta-dismiss {
-            border: 1px solid rgba(0, 225, 255, 0.55);
-            background: linear-gradient(135deg, rgba(52, 255, 154, 0.34), rgba(0, 178, 255, 0.34));
-            color: #001b11;
+            border: 1px solid var(--panel-border);
+            background: var(--accent);
+            color: #020408;
             border-radius: 10px;
             padding: 11px 18px;
             font-size: 0.9rem;
@@ -206,7 +205,6 @@
             letter-spacing: 0.05em;
             text-transform: uppercase;
             cursor: pointer;
-            box-shadow: 0 0 18px rgba(52, 255, 154, 0.28);
         }
 
         .beta-dismiss:hover {
@@ -222,6 +220,7 @@
             justify-content: center;
             padding: 20px;
             background: rgba(1, 8, 16, 0.76);
+            -webkit-backdrop-filter: blur(6px);;
             backdrop-filter: blur(6px);
         }
 
@@ -397,9 +396,130 @@
             .mode-pane { min-height: 100vh; padding: 0; }
             .app-shell { padding: 0; }
         }
+
+        /* ===== SCHOOL MODE POPUP ===== */
+        .school-popup-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(1, 8, 16, 0.76);
+            -webkit-backdrop-filter: blur(6px);;
+            backdrop-filter: blur(6px);
+        }
+
+        .school-popup-overlay.active { display: flex; }
+
+        .school-popup-box {
+            width: min(520px, 100%);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius);
+            background: rgba(2, 6, 12, 0.95);
+            padding: 32px 28px 22px;
+        }
+
+        .school-popup-title {
+            margin: 0 0 16px;
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: var(--text);
+            font-family: Inter, sans-serif;
+        }
+
+        .school-popup-desc {
+            margin: 0 0 24px;
+            color: var(--muted);
+            line-height: 1.65;
+            font-size: 0.88rem;
+            font-weight: 400;
+            font-family: Inter, sans-serif;
+            text-align: left;
+        }
+
+        .school-popup-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .school-popup-btn {
+            flex: 1;
+            border: 1px solid var(--panel-border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.82rem;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            font-family: Inter, sans-serif;
+            transition: border-color 0.15s, color 0.15s;
+        }
+
+        .school-popup-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .school-popup-dontshow {
+            display: block;
+            margin: 0 0 14px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-family: Inter, sans-serif;
+            text-decoration: underline;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            opacity: 0.6;
+            transition: opacity 0.15s;
+        }
+
+        .school-popup-dontshow:hover {
+            opacity: 1;
+        }
+
+        .school-popup-footer {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--muted);
+            font-family: Inter, sans-serif;
+        }
+
+        .school-popup-footer .discord-link {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .school-popup-footer .discord-link:hover { text-decoration: underline; }
+
+        @media (max-width: 520px) {
+            .school-popup-buttons { flex-direction: column; }
+        }
     </style>
 </head>
 <body data-mode="games">
+
+    <!-- SCHOOL MODE POPUP -->
+    <div id="school-mode-popup" class="school-popup-overlay" style="display:none;">
+        <div class="school-popup-box">
+            <h1 class="school-popup-title">Horion School Mode</h1>
+            <p class="school-popup-desc">Schools have been targeting Horion methods and servers. If you are at school, I have made a school mode that only shows verified unblocked games and TV servers to avoid bans. There will be less available shows and games, but I am always working on compatibility and fixes. If you do not care or are not at school, continue as normal.</p>
+            <div class="school-popup-buttons">
+                <button id="school-mode-enter" class="school-popup-btn" type="button">Enter School Mode</button>
+                <button id="school-mode-normal" class="school-popup-btn" type="button">Continue As Normal</button>
+            </div>
+            <button id="school-mode-dontshow" class="school-popup-dontshow" type="button">Turn off and don't show again</button>
+            <p class="school-popup-footer">For any problems, please join the <a href="https://discord.gg/M3KeUcVpfa" target="_blank" rel="noopener noreferrer" class="discord-link">discord server</a>.</p>
+        </div>
+    </div>
+
     <div class="bg-glow" aria-hidden="true"></div>
     <div class="bg-noise" aria-hidden="true"></div>
 
@@ -408,13 +528,13 @@
             <div class="switch-track" id="switch-track">
                 <section class="mode-pane active" aria-label="Games mode" data-mode-pane="games">
                     <div class="embed-wrap">
-                        <iframe id="games-frame" class="app-frame" title="Horion Games" allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen></iframe>
+                        <iframe id="games-frame" class="app-frame" title="Horion Games" allow="fullscreen *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen></iframe>
                     </div>
                 </section>
 
                 <section class="mode-pane" aria-label="TV mode" data-mode-pane="tv">
                     <div class="embed-wrap">
-                        <iframe id="tv-frame" class="app-frame" title="Horion TV" allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen></iframe>
+                        <iframe id="tv-frame" class="app-frame" title="Horion TV" allow="fullscreen *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen></iframe>
                     </div>
                 </section>
             </div>
@@ -456,6 +576,7 @@ body {
     overflow-x: hidden;
     overflow-y: scroll;
     scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
     scroll-padding-top: var(--navbar-content-offset, 125px);
 }
 
@@ -524,6 +645,7 @@ body {
     left: 0;
     right: 0;
     z-index: 100;
+    -webkit-backdrop-filter: blur(5px);;
     backdrop-filter: blur(5px);
 }
 
@@ -660,6 +782,7 @@ body.navbar-hidden .nav-collapse-btn::before {
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(0, 112, 255, 0.1);
     border-radius: 4px;
+    -webkit-backdrop-filter: blur(2px);;
     backdrop-filter: blur(2px);
     min-height: 60vh;
     display: flex;
@@ -1090,6 +1213,7 @@ body.navbar-hidden .nav-collapse-btn::before {
     border: 1px solid rgba(0, 112, 255, 0.2);
     background: rgba(0, 12, 24, 0.75);
     border-radius: 0;
+    -webkit-backdrop-filter: blur(2px);;
     backdrop-filter: blur(2px);
 }
 
@@ -1597,6 +1721,80 @@ body.navbar-hidden .featured-game-view {
     grid-row: 1 / span 2;
 }
 
+/* ===== SIMPLE FEATURED GAME LINK BOX (non-school mode) ===== */
+.simple-game-link-box {
+    display: none;
+    align-items: stretch;
+    gap: 0;
+    margin: 12px 0 26px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.simple-game-link-url {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid rgba(0, 112, 255, 0.35);
+    border-right: none;
+    background: rgba(0, 8, 18, 0.7);
+    color: #8bb4cc;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.simple-game-continue {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 20px;
+    border: 1px solid rgba(0, 112, 255, 0.35);
+    background: rgba(0, 112, 255, 0.1);
+    color: #d9ecfb;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.simple-game-continue:hover {
+    background: rgba(0, 112, 255, 0.2);
+}
+
+.simple-game-continue .arrow {
+    font-size: 1rem;
+}
+
+/* Non-school mode: hide fancy iframe/buttons, show simple box */
+body:not(.school-mode) .featured-game-frame-wrap {
+    display: none !important;
+}
+
+body:not(.school-mode) .featured-game-notice {
+    display: none !important;
+}
+
+body:not(.school-mode) .featured-game-actions {
+    display: none !important;
+}
+
+body:not(.school-mode) .simple-game-link-box {
+    display: flex !important;
+}
+
+body.school-mode .simple-game-link-box {
+    display: none !important;
+}
+
 @media (max-width: 760px) {
     .featured-game-view {
         padding: 14px 12px 18px;
@@ -1804,6 +2002,7 @@ canvas {
             border-radius: 50%;
             cursor: pointer;
             transition: border-color 0.18s, background 0.18s;
+            -webkit-backdrop-filter: blur(6px);;
             backdrop-filter: blur(6px);
             padding: 0;
         }
@@ -1903,19 +2102,12 @@ canvas {
         </div>
 
         <div class="recent-changes-container">
-            <div class="recent-label">TESTING #1</div>
+            <div class="recent-label">TESTING #2</div>
             <div class="change-log">
-                > Testing #1 is complete. Testing #2 may begin whenever I feel neccesary.<br>
+                > Testing #2 has begun. Current changes:<br>
                 > Loads of bug fixes <br>
-                > Overall polishing/outside of Horion stuff<br>
-                > Added minimizing the navbar<br>
-                > Brand new source for TV<br>
-                > NEW YOUTUBE COMPLETELY REVAMPED!!!<br>
-                > New sorting for games <br>
-                > Added a open link button for TV<br>
-                > Added TV server 3<br>
-                > New game carousel for top-notch games<br>
-                > New unreleased tv/movie detection
+                > Addded school mode to fix blocking issues<br>
+                > Live porting more games to work with school mode
             </div>
         </div>
     </div>
@@ -1953,7 +2145,7 @@ canvas {
                             <p class="fc-desc">Play a variety of online party games, made specifically for Horion. Created by CMG.</p>
                         </div>
                         <div class="fc-logo-wrap">
-                            <img class="fc-logo" src="horionpartythumbnail.png" alt="" draggable="false">
+                            <img class="fc-logo" src="assets/horionpartythumbnail.png" alt="" draggable="false">
                         </div>
                     </div>
                     <div class="fc-slide" data-fc-name="Balatro" onclick="fcOpenGame(this)">
@@ -2010,10 +2202,18 @@ canvas {
             <div class="featured-game-main">
                 <p class="featured-game-notice">If it says it's blocked, please refresh and try again.</p>
                 <div class="featured-game-frame-wrap">
-                    <iframe id="featured-game-frame" class="featured-game-frame" src="about:blank" title="Featured Game Player" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-downloads" allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" scrolling="no"></iframe>
+                    <iframe id="featured-game-frame" class="featured-game-frame" src="about:blank" title="Featured Game Player" sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-downloads" allow="fullscreen *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" scrolling="no"></iframe>
                 </div>
 
                 <p class="featured-game-notice">If a game does not work, open it in about:blank.</p>
+
+                <!-- Simple link box (non-school mode) -->
+                <div id="simple-game-link-box" class="simple-game-link-box">
+                    <div class="simple-game-link-url" id="simple-game-url">Loading...</div>
+                    <a id="simple-game-continue" class="simple-game-continue" href="#" target="_blank" rel="noopener noreferrer">
+                        Continue <span class="arrow">&#8594;</span>
+                    </a>
+                </div>
 
             <div class="featured-game-actions">
                 <button id="featured-game-fullscreen" class="featured-game-btn fullscreen-btn" type="button" aria-label="Fullscreen" title="Fullscreen"></button>
@@ -2063,7 +2263,7 @@ canvas {
     <div class="info-grid">
         <div class="info-card">
             <span class="card-label">CURRENT BUILD</span>
-            <span class="card-value">TEST #1</span>
+            <span class="card-value">TEST #2</span>
         </div>
         <div class="info-card">
             <span class="card-label">BRANCH</span>
@@ -2075,7 +2275,7 @@ canvas {
         </div>
         <div class="info-card">
             <span class="card-label">LAST UPDATE</span>
-            <span class="card-value">2026.6.2</span>
+            <span class="card-value">2026.8.17</span>
         </div>
     </div>
 
@@ -2092,7 +2292,7 @@ canvas {
         <div class="credits-title">CREDITS & LINKS</div>
         <p> <b>Developed By:</b><br> CMG</p>
         <div class="credits-logo-wrap">
-            <img src="./cmg.png" alt="CMG logo" class="credits-logo">
+            <img src="assets/cmg.png" alt="CMG logo" class="credits-logo">
         </div>
         </p><br><br>
         <a href="https://bit.ly/horiongames" target="_blank" class="credit-link">> Links Document</a>
@@ -2104,7 +2304,7 @@ canvas {
 <footer class="site-footer">
     <div class="site-footer-inner">
         <div class="site-footer-brand">
-            <img src="./cmg.png" alt="CMG" class="site-footer-logo">
+            <img src="assets/cmg.png" alt="CMG" class="site-footer-logo">
         </div>
         <div class="site-footer-links">
             <a href="https://www.youtube.com/channel/UCQrYBaYJDoSihLEx-gP820g" target="_blank" rel="noopener noreferrer">YouTube</a>
@@ -2121,7 +2321,7 @@ canvas {
     // 1. DATA CONFIGURATION
     // ==========================================
     const OFFICIAL_GITHUB_URL = 'https://horion.crosmakesgames.com';
-    const DATABASE_GAME_BASE_URL = 'https://crosmakesgames.github.io/ugs-singlefile/UGS-Files/';
+    const DATABASE_GAME_BASE_URL = 'https://crosmakesgames.com/ugs-singlefile/UGS-Files/';
     const PORTAL_DOC_URL = 'https://bit.ly/horiongames';
     let launchedFromAboutBlankBridge = false;
 
@@ -2192,7 +2392,6 @@ canvas {
     });
 
         const featuredGames = [
-    { filename: 'westernroulette.html', displayname: 'Western Roulette', desc: 'Western Roulette is a cowboy dueling game made by CMG built around fast reactions and high-stakes timing.', image: 'https://static.vecteezy.com/system/resources/previews/050/005/195/non_2x/pixelated-cowboy-roulette-pistol-vector.jpg', type: 'web', recommended: ['Gun Blood', '10 Bullets', 'Gun Spin'] },
     { filename: 'https://cmakesg.neocities.org/intothedeep', displayname: 'Into The Deep', desc: 'Into The Deep was the first game made by CMG and is very fun extraction game.', image: 'https://i.pinimg.com/originals/39/af/84/39af8424bb91a3b0a6ec1977ed95e1bb.png', type: 'web', recommended: ['Dud', 'Gun Knight', 'Die In The Dungeon'] },
 { filename: 'https://songl.io/', displayname: 'Songl.io', desc: 'Songl.io is a multiplayer rhythm game where you listen to clips of songs and guess.', image: 'https://ph-files.imgix.net/10ae9632-5e22-407a-a123-b917b4f20b5d.jpeg?auto=compress&codec=mozjpeg&cs=strip&auto=format&w=64&h=64&fit=crop&frame=1&dpr=2', type: 'web', recommended: ['Gartic Phone', 'skribbl.io', 'Secret Hitler'] },
 { filename: 'https://wiki-race.com/', displayname: 'Wiki Race', desc: 'Wiki Race is a browser challenge where you jump between Wikipedia articles as fast as possible to reach a target page.', image: 'https://play-lh.googleusercontent.com/7z_Ju9hgBJuqk4Xhm_HyLhtRTMmuwvfvp4SFvAZcJzwQEoL3KQYME0FKu518CxEt9Fo1Cf52eNVpsxkeCoWvkg', type: 'web', recommended: ['OpenGuessr', 'skribbl.io', '2048'] },
@@ -2321,7 +2520,7 @@ canvas {
 
   { filename: 'https://smashkarts.io/', displayname: "Smash Karts", desc: 'Smash Karts is a multiplayer kart combat game with weapons and arena-style battles.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAdrpTBNT0iI8zuPF0NX0z6t9fJtigQpEhsQ&s', type: 'web', recommended: ['Kart Bros', 'RL Sideswipe', 'Brawl Stars'] },
 
-  { filename: 'https://telatro.tomcat.sh/game/', displayname: "Balatro", desc: 'Balatro is a roguelike poker deckbuilder focused on combos and score multipliers.', image: 'https://play-lh.googleusercontent.com/RSPv_SMlA3Lun8VHaJD7xCBQg29eCJR9sNJtZNJGlybVs8byYVLz4WnohrbLScC9srg', type: 'web', aboutBlankOnly: true, recommended: ['Dungeon Deck', 'Die In The Dungeon', 'Dungeons and Degenerate Gamblers'] },
+  { schoolmode: true, filename: 'https://telatro.tomcat.sh/game/', displayname: "Balatro", desc: 'Balatro is a roguelike poker deckbuilder focused on combos and score multipliers.', image: 'https://play-lh.googleusercontent.com/RSPv_SMlA3Lun8VHaJD7xCBQg29eCJR9sNJtZNJGlybVs8byYVLz4WnohrbLScC9srg', type: 'web', aboutBlankOnly: true, recommended: ['Dungeon Deck', 'Die In The Dungeon', 'Dungeons and Degenerate Gamblers'] },
 
   { filename: 'https://shapez.io', displayname: "shapez.io", desc: 'shapez.io is a factory automation game where you design systems to process shapes.', image: 'https://f4.bcbits.com/img/a2183267624_16.jpg', type: 'web', recommended: ['Space Company', 'Zombs.io', 'Bloons TD4'] },
 
@@ -2335,7 +2534,6 @@ canvas {
 
   { filename: 'https://garticphone.com/', displayname: "Gartic Phone", desc: 'Gartic Phone is a party game combining drawing and telephone-style message chains.', image: 'https://assets-prd.ignimgs.com/2022/11/12/gartic-phone-button-1668215807194.jpg?crop=1%3A1%2Csmart&format=jpg&auto=webp&quality=80', type: 'web', recommended: ['Skribbl.io', 'Secret Hitler', 'Ink Game'] },
 
-  { filename: 'sandboxels.html', displayname: 'Sandboxels', desc: 'Sandboxels is a falling-sand simulation game where elements interact in complex physics systems.', image: 'https://substackcdn.com/image/fetch/$s_!3uou!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb143b429-a854-43e5-9599-fcba40f40d48_960x918.jpeg', type: 'web', recommended: ['Shapez.io', 'Space Company', 'Stacktris'] },
 
     { filename: 'clslitherio', displayname: 'slither.io', desc: 'slither.io is a multiplayer snake game where you grow by consuming pellets and other players.', image: 'https://www.google.com/s2/favicons?domain=slither.io&sz=256', recommended: ['MooMoo.io', 'Zombs Royale', 'ev.io'] },
 
@@ -2351,7 +2549,7 @@ canvas {
 
     { filename: 'clpapaswingeria', displayname: "Papa's Wingeria", desc: 'Papa\'s Wingeria is a restaurant management game where you cook and serve wings.', image: 'https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/0ef4d3c4bd35cc2e9b65f3da07448fc2/papas-wingeria.jfif', recommended: ['Papa\'s Cheeseria', 'Burrito Bison: Launcha Libre', 'Cookie Clicker'] },
     { filename: 'https://badparentingame.io/play/buckshot-roulette/', displayname: "Buckshot Roulette", desc: 'Shoot yourself or the dealer in this russian-roulette with shotguns game.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyFj5uK14h_47xiDyyzMipCpRvNfY3XcTtPeABOTxluQ&s=10', type:'web', recommended: ['Balatro', 'Space Company', 'Shapez.io'] },
-    { filename: 'https://horionparty.crosmakesgames.com', displayname: "Horion Party", desc: 'Play a variety of online party games, made specifically for Horion. Created by CMG.', image: 'horionpartythumbnail.png', type:'web', recommended: ['8 Ball: Classic', 'Gartic Phone', 'Skribbl.io'] },
+    { filename: 'https://horionparty.crosmakesgames.com', displayname: "Horion Party", desc: 'Play a variety of online party games, made specifically for Horion. Created by CMG.', image: 'assets/horionpartythumbnail.png', type:'web', recommended: ['8 Ball: Classic', 'Gartic Phone', 'Skribbl.io'], schoolmode:true },
 ];
     const FEATURED_GENRES = ['Rougelike', 'Action', 'Strategy', 'Platformer'];
     const FEATURED_GENRE_BY_NAME = {
@@ -2459,7 +2657,7 @@ canvas {
     });
 
     const databaseFiles = [
-        "cl1",
+          "cl1",
 "cl100RoomsOfEnemies",
 "cl10bullets",
 "cl10minutestildawn",
@@ -5157,6 +5355,239 @@ canvas {
 "clzuma",
 "clzumashooter",
 "cl�oo",
+"clbaldi-3",
+"clbaldi-b",
+"cl100in1nes",
+"cl10bullets",
+"cl10yardfight",
+"cl1942nes",
+"claceattorneymilesedgeworth",
+"cladvancewarsdualstrike",
+"clalexkiddinmiracleworld",
+"clangrybirds2",
+"clangrybirdsslingshotfrenzy",
+"clanimalcrossing",
+"clanimalforestn64",
+"clantipathy",
+"clarcadevolley",
+"classroommaxxing",
+"clb3313unabandonedA2",
+"clbadicecream2",
+"clbadicecream3",
+"clballoonfight",
+"clbaseballnes",
+"clbejeweledtwistds",
+"clbitburner",
+"clbotwds",
+"clbrotato",
+"clbuckbumble",
+"clcactusmccoy",
+"clcactusmccoy2",
+"clcarnivalgamesds",
+"clceleste",
+"clceleste2",
+"clcelestemariodx",
+"clCeliasStupidROMHack",
+"clchoroqwonderful",
+"clclucluland",
+"clcoldfront",
+"clcoverorangeplayerspack3",
+"clcrash2",
+"clcrash3",
+"clcrashbandicoot (1)",
+"clcrashbash",
+"clcvooc",
+"cldecision3",
+"clDKNESCollection",
+"cldodecadragons",
+"cldoomori",
+"cldoubledribble",
+"cldragonquest5ds",
+"clducktales2",
+"cldunedash",
+"cldungeonsanddegenerategambler",
+"cldungeonsanddegenerategamblerdebug",
+"cleccothedolphin",
+"clelevatoraction",
+"clescalatingduel",
+"clescaperoad3",
+"cleugeneslife",
+"clexcitebike",
+"clexitpath",
+"clfamidashESides1.2.8",
+"clfantasyzone",
+"clfinalfantasy2nes",
+"clfinalfantasy3nes",
+"clfivenightsatfrickbears3",
+"clfloodrunner3",
+"clfnfsohv2",
+"clfzerox",
+"clGeometryDashWave",
+"clgettingoverit",
+"clgrandshiftauto",
+"clgyromite",
+"clhangonsms",
+"clheartandsoul1.2.1",
+"clHelltaker",
+"clhl2doom",
+"clHoennsLastWish",
+"clhooked",
+"clhorntale",
+"clhungrylamu2",
+"clhungrypumpkin",
+"cliceclimber",
+"clihateyou",
+"climpossiblequiz",
+"climpossiblequiz2",
+"cljojobaps1",
+"cljustaplatformer",
+"cljustaplatformerE",
+"cljustaplatformerE2",
+"clknuckleschaotix",
+"clleafblower",
+"cllearntofly2hacked",
+"clLearnToFly3Debug",
+"cllearntoflyidle",
+"cllearntoflyidlehack",
+"cllegionbreaker",
+"clmachrider",
+"clmariobrosnes",
+"clMarvelVsCapcomPS1",
+"clMarvelVsStreetFighter",
+"clmedalofhonor",
+"clmegamanx5",
+"clmegamanx6",
+"clmeowio",
+"clmidwaysgreatesthitsn64",
+"clmkmythologiesn64",
+"clmktrilogyps1",
+"clmrdriller",
+"clmrdriller2",
+"clneonrider",
+"clnewersmbds",
+"clnewsuperbowserworld",
+"clnguidle",
+"clnsmbuds",
+"clnsmbwds",
+"clOotMasterQuest",
+"clOrangeRoulette",
+"clPaperMarioDSE",
+"clPaperMarioPracticeHack",
+"clpinballnes",
+"clPokeAmbrosia",
+"clpokecrystaladvanceredux",
+"clpokecrystalclear",
+"clpokeemeraldextendedcut",
+"clpokeemeraldimperium",
+"clpokeemeraldrogue",
+"clPokeEmeraldRogueEX",
+"clpokefrlgplus",
+"clPokeFusion3",
+"clpokegoldenshield",
+"clPokeHeartgoldGenerations",
+"clpokelowbudgetcrystal",
+"clpokemonemeraldcrest",
+"clPokemonemeraldrouge",
+"clpokemonperfectemerald5.5",
+"clpokemonstadium2",
+"clpokemoonemerald",
+"clpokemoongalaxy",
+"clpokepicross",
+"clpokepureblue",
+"clpokepuregreen",
+"clpokepurered",
+"clpokerowe",
+"clpokescrambledscarlet",
+"clpokesunsky",
+"clPokeThetaEmeraldEX",
+"clpoketoomanytypes2",
+"clportraitofruin",
+"clprankcalltungtungtungsahurclicker",
+"clprestigetree",
+"clprowrestling",
+"clpunchthetrump",
+"clquake",
+"clrabbithole106",
+"clradicalred",
+"clreacticore",
+"clroadrunnernes",
+"clrunfromwitheredfox",
+"clscoobydoocreepyrun",
+"clscoobydoozombiehunter",
+"clsimcity64",
+"clSINGLEFILE",
+"clskywire",
+"clskywire2",
+"clslalomnes",
+"clslicemaster",
+"clsm64greenstars",
+"clSM64Land",
+"clsm64lastimpact",
+"clsm64liminaldream",
+"clsm64sapphire",
+"clsm64yscaled",
+"clsmashremix2.0.1",
+"clsoccernes",
+"clsomari64",
+"clsonic2pinkedition",
+"clsonic2timeandplace",
+"clsonic3andsally",
+"clsoniccd",
+"clsonicclassicheroes",
+"clsonicdrift",
+"clsonicdrift2",
+"clsonicerazor",
+"clsonicmegamix5.0aLEAKED",
+"clsonicmushroomblast",
+"clsonicscorchedquest",
+"clsotn",
+"clspaceharriersms",
+"clspidermanps1",
+"clSportsHeadsIceHockey",
+"clsprunkipyramixed",
+"clstarfox",
+"clstarfox2",
+"clstarfoxsfx2",
+"clsugaryspire",
+"clsupermario3mix",
+"clsupermario74",
+"clsupermariostarroad",
+"clsupermariostarroadretooled",
+"clswingforbrainrots",
+"cltailsadventure",
+"cltailsskypatrol",
+"cltekken2ps1",
+"cltekken3ps1",
+"cltennisnes",
+"clthemeparkpsx",
+"clTheSunForTheVampire",
+"cltomodachicollection",
+"cltoomanytypes",
+"cltreeshateyou",
+"cltungtungbasics",
+"clumjammerlammy",
+"clunfairmarioworkquestionmark",
+"clurbanchampion",
+"clUvuvwevwevweOnyetenvewveUgwemubwemOssas",
+"clvibribbon",
+"clvolleyball",
+"clwackyflip",
+"clwbml",
+"clwebdashers",
+"clwonderboy3",
+"clwonderboyarcade",
+"clwreckingcrew",
+"clwwfattitude",
+"clwwfsmackdown2",
+"clxor",
+"codeorg",
+"EB.Client.V1.0.0R2.WASM",
+"esm",
+"npm",
+"skypack",
+"supremeduelistfix",
+"thiefpuzzle",
+"unpkg",
 "cl?"
 ];
 
@@ -5510,10 +5941,36 @@ canvas {
     let featuredFrameSessionKey = '';
     let featuredGameBlobUrl = '';
 
+    function setFrameContent(frameEl, htmlContent) {
+        // Use blob URL for large content (Safari has ~2MB srcdoc limit).
+        // Fall back to srcdoc for small content (faster, no cleanup needed).
+        var contentSize = (htmlContent || '').length;
+        // Clean up any previous blob URL
+        if (featuredGameBlobUrl) {
+            try { URL.revokeObjectURL(featuredGameBlobUrl); } catch (err) {}
+            featuredGameBlobUrl = '';
+        }
+        if (contentSize > 500000) {
+            // Large content: use blob URL (no size limit, works on all browsers)
+            try {
+                var blob = new Blob([htmlContent], { type: 'text/html' });
+                featuredGameBlobUrl = URL.createObjectURL(blob);
+                frameEl.removeAttribute('srcdoc');
+                frameEl.src = featuredGameBlobUrl;
+                return;
+            } catch (e) {
+                // If blob creation fails, fall back to srcdoc
+            }
+        }
+        // Small content: use srcdoc directly
+        frameEl.removeAttribute('src');
+        frameEl.srcdoc = htmlContent;
+    }
+
     const FEATURED_FRAME_DEFAULT_SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-downloads';
     const FEATURED_FRAME_WEB_SANDBOX = FEATURED_FRAME_DEFAULT_SANDBOX;
-    const FEATURED_FRAME_DEFAULT_ALLOW = 'autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *';
-    const FEATURED_FRAME_WEBNOSANDBOX_ALLOW = 'gamepad *; fullscreen *; autoplay *';
+    const FEATURED_FRAME_DEFAULT_ALLOW = 'fullscreen *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *';
+    const FEATURED_FRAME_WEBNOSANDBOX_ALLOW = 'gamepad *; fullscreen *';
 
     function isFeaturedWebGame(game) {
         return game && (game.type === 'web' || game.type === 'webnosandbox');
@@ -5616,7 +6073,7 @@ canvas {
             .replace(/&/g, '&amp;')
             .replace(/"/g, '&quot;');
 
-        return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '" allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen referrerpolicy="no-referrer"></iframe><script>(function(){window.alert=function(){};window.confirm=function(){return false;};window.prompt=function(){return null;};})();<\/script></body></html>';
+        return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '" allow="fullscreen *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen referrerpolicy="no-referrer"></iframe><script>(function(){window.alert=function(){};window.confirm=function(){return false;};window.prompt=function(){return null;};})();<\/script></body></html>';
     }
 
     function buildAboutBlankOnlySrcDoc(game) {
@@ -5627,6 +6084,69 @@ canvas {
             .replace(/"/g, '&quot;');
 
         return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Arial,sans-serif}body{display:flex;align-items:center;justify-content:center;text-align:center}.msg{font-size:clamp(18px,3vw,34px);font-weight:700;line-height:1.35;padding:24px}.sub{display:block;margin-top:10px;font-size:clamp(12px,1.5vw,16px);font-weight:400;color:#aaa}</style></head><body><div class="msg">Open in about:blank to run<span class="sub">' + title + ' only works when opened in a about:blank.</span></div></body></html>';
+    }
+
+    function rewriteRelativeUrls(html, baseUrl) {
+        try {
+            // Check if the HTML already has a <base> tag
+            var baseMatch = html.match(/<base\s+[^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*/i);
+            if (baseMatch) {
+                // Game already has a base tag (e.g. pointing to UGS-Assets CDN).
+                // Extract the href and re-inject it cleanly inside <head>.
+                // Many UGS games put <base> outside <head> or use invalid </base> closing tags.
+                var existingBaseHref = baseMatch[1];
+                var cleanBaseTag = '<base href="' + existingBaseHref + '">';
+                // Remove ALL existing <base> tags (including invalid </base> closings)
+                var cleaned = html.replace(/<base[^>]*>/gi, '').replace(/<\/\s*base\s*>/gi, '');
+                // Inject the clean base tag inside <head>
+                if (/<head[^>]*>/i.test(cleaned)) {
+                    cleaned = cleaned.replace(/<head[^>]*>/i, function(match) {
+                        return match + cleanBaseTag;
+                    });
+                } else if (/<html[^>]*>/i.test(cleaned)) {
+                    cleaned = cleaned.replace(/<html[^>]*>/i, function(match) {
+                        return match + '<head>' + cleanBaseTag + '</head>';
+                    });
+                } else {
+                    cleaned = '<head>' + cleanBaseTag + '</head>' + cleaned;
+                }
+                return cleaned;
+            }
+            // No existing base tag - inject one pointing to baseUrl
+            var baseTag = '<base href="' + baseUrl + '">';
+            if (/<head[^>]*>/i.test(html)) {
+                return html.replace(/<head[^>]*>/i, function(match) {
+                    return match + baseTag;
+                });
+            } else if (/<html[^>]*>/i.test(html)) {
+                return html.replace(/<html[^>]*>/i, function(match) {
+                    return match + '<head>' + baseTag + '</head>';
+                });
+            } else {
+                return '<head>' + baseTag + '</head>' + html;
+            }
+        } catch(e) {
+            return html;
+        }
+    }
+
+    function updateSimpleGameLinkBox(game, targetUrl) {
+        var box = document.getElementById('simple-game-link-box');
+        var urlEl = document.getElementById('simple-game-url');
+        var linkEl = document.getElementById('simple-game-continue');
+        if (!box || !urlEl || !linkEl) return;
+        var displayUrl = String(targetUrl || '');
+        if (displayUrl.length > 60) displayUrl = displayUrl.substring(0, 57) + '...';
+        urlEl.textContent = displayUrl;
+        linkEl.href = targetUrl || '#';
+    }
+
+    function processDatabaseGameHtml(html, gameUrl) {
+        // jsDelivr CDN has proper CORS headers and MIME types,
+        // so scripts and stylesheets can load directly without inlining.
+        // Just inject a <base> tag pointing to the CDN directory.
+        var cleanUrl = String(gameUrl || '').split('?')[0];
+        return Promise.resolve(rewriteRelativeUrls(html, cleanUrl));
     }
 
     function loadFeaturedGameIntoFrame(game) {
@@ -5647,22 +6167,108 @@ canvas {
             return;
         }
 
-        if (game.type === 'webnosandbox') {
-            frameEl.src = targetUrl || 'about:blank';
-            updateFeaturedFrameScrollMode();
-            return;
+        // Clean up old blob URL
+        if (featuredGameBlobUrl) {
+            try { URL.revokeObjectURL(featuredGameBlobUrl); } catch (err) {}
+            featuredGameBlobUrl = '';
         }
 
-        if (game.type === 'web') {
-            frameEl.src = 'about:blank';
-            frameEl.srcdoc = buildWebFeaturedSrcDoc(targetUrl || 'about:blank');
-            updateFeaturedFrameScrollMode();
-            return;
-        }
+        var token = featuredFrameLoadToken;
 
+        // Show loading state
         frameEl.src = 'about:blank';
-        frameEl.srcdoc = buildWebFeaturedSrcDoc(targetUrl || 'about:blank');
-        updateFeaturedFrameScrollMode();
+        frameEl.srcdoc = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center}</style></head><body><div style="font-size:14px;color:#7da8c2">Loading...</div></body></html>';
+
+        var isSchoolMode = false;
+        try {
+            isSchoolMode = window.parent && window.parent.schoolMode;
+        } catch(e) {}
+
+        var bustUrl = targetUrl + (targetUrl.indexOf('?') !== -1 ? '&' : '?') + 't=' + Date.now();
+
+        if (isSchoolMode) {
+            // School mode: fetch and run directly, no iframe fallback
+            var isDb = !isFeaturedWebGame(game);
+            fetch(bustUrl)
+                .then(function(response) { return response.text(); })
+                .then(function(text) {
+                    if (token !== featuredFrameLoadToken) return;
+                    if (isDb) {
+                        return processDatabaseGameHtml(text, targetUrl);
+                    } else {
+                        return rewriteRelativeUrls(text, targetUrl);
+                    }
+                })
+                .then(function(processedHtml) {
+                    if (token !== featuredFrameLoadToken) return;
+                    frameEl.removeAttribute('srcdoc');
+                    setFrameContent(frameEl, processedHtml);
+                    updateSimpleGameLinkBox(game, targetUrl);
+                    updateFeaturedFrameScrollMode();
+                })
+                .catch(function() {
+                    if (token !== featuredFrameLoadToken) return;
+                    // Fallback: try loading directly via iframe src
+                    frameEl.removeAttribute('srcdoc');
+                    if (isDb) {
+                        frameEl.src = targetUrl || 'about:blank';
+                    } else {
+                        frameEl.src = 'about:blank';
+                        frameEl.srcdoc = buildWebFeaturedSrcDoc(targetUrl || 'about:blank');
+                    }
+                    updateSimpleGameLinkBox(game, targetUrl);
+                    updateFeaturedFrameScrollMode();
+                });
+        } else {
+            // Normal mode
+            if (!isFeaturedWebGame(game)) {
+                // Database game: fetch, inline resources, add base tag
+                fetch(bustUrl)
+                    .then(function(response) { return response.text(); })
+                    .then(function(text) {
+                        if (token !== featuredFrameLoadToken) return;
+                        return processDatabaseGameHtml(text, targetUrl);
+                    })
+                    .then(function(processedHtml) {
+                        if (token !== featuredFrameLoadToken) return;
+                        frameEl.removeAttribute('srcdoc');
+                        setFrameContent(frameEl, processedHtml);
+                        updateSimpleGameLinkBox(game, targetUrl);
+                        updateFeaturedFrameScrollMode();
+                    })
+                    .catch(function() {
+                        if (token !== featuredFrameLoadToken) return;
+                        // Fallback: try loading directly via iframe src
+                        frameEl.removeAttribute('srcdoc');
+                        frameEl.src = targetUrl || 'about:blank';
+                        updateSimpleGameLinkBox(game, targetUrl);
+                        updateFeaturedFrameScrollMode();
+                    });
+            } else {
+                // External web game: fetch + iframe wrapper fallback
+                fetch(bustUrl)
+                        .then(function(response) { return response.text(); })
+                        .then(function(text) {
+                            if (token !== featuredFrameLoadToken) return;
+                            frameEl.removeAttribute('srcdoc');
+                            setFrameContent(frameEl, text);
+                            updateSimpleGameLinkBox(game, targetUrl);
+                            updateFeaturedFrameScrollMode();
+                        })
+                        .catch(function() {
+                            if (token !== featuredFrameLoadToken) return;
+                            // Fallback: use iframe wrapper approach
+                            if (game.type === 'webnosandbox') {
+                                frameEl.src = targetUrl || 'about:blank';
+                            } else {
+                                frameEl.src = 'about:blank';
+                                frameEl.srcdoc = buildWebFeaturedSrcDoc(targetUrl || 'about:blank');
+                            }
+                            updateSimpleGameLinkBox(game, targetUrl);
+                            updateFeaturedFrameScrollMode();
+                        });
+            }
+        }
     }
 
     function refreshFeaturedGameFrame() {
@@ -5832,7 +6438,49 @@ canvas {
         if (!container) return;
 
         container.innerHTML = '';
-        getRecommendedFeaturedGames(currentGame, 3).forEach(game => {
+        var recs = getRecommendedFeaturedGames(currentGame, 3);
+
+        // In school mode, replace non-school-mode recommendations with random school-mode games
+        var inSchool = false;
+        try { inSchool = window.parent && window.parent.schoolMode; } catch(e) {}
+
+        if (inSchool) {
+            // Filter out non-school-mode web games
+            var filtered = recs.filter(function(g) {
+                if (g.type === 'web' || g.type === 'webnosandbox') {
+                    return g.schoolmode === true;
+                }
+                return true;
+            });
+
+            // If we removed any, fill with random school-mode games
+            if (filtered.length < 3) {
+                var schoolModeGames = featuredGames.filter(function(g) {
+                    if (g.filename === currentGame.filename) return false;
+                    if (g.type === 'web' || g.type === 'webnosandbox') {
+                        return g.schoolmode === true;
+                    }
+                    return true;
+                });
+                // Shuffle and pick replacements
+                var usedNames = new Set(filtered.map(function(g) { return g.filename; }));
+                usedNames.add(currentGame.filename);
+                var available = schoolModeGames.filter(function(g) { return !usedNames.has(g.filename); });
+                // Simple shuffle
+                for (var i = available.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = available[i];
+                    available[i] = available[j];
+                    available[j] = temp;
+                }
+                while (filtered.length < 3 && available.length > 0) {
+                    filtered.push(available.shift());
+                }
+            }
+            recs = filtered;
+        }
+
+        recs.forEach(game => {
             const card = createGameCard(game);
             container.appendChild(card);
         });
@@ -6016,6 +6664,17 @@ canvas {
         }
 
         let sortedGames = [...featuredGames];
+        // School mode: filter out web/webnosandbox games unless schoolmode: true
+        try {
+            if (window.parent && window.parent.schoolMode) {
+                sortedGames = sortedGames.filter(function(game) {
+                    if (game.type === 'web' || game.type === 'webnosandbox') {
+                        return game.schoolmode === true;
+                    }
+                    return true; // database/non-web games stay
+                });
+            }
+        } catch(e) {}
         if (featuredSortMode === 'alphabetical') {
             sortedGames.sort((a, b) => a.displayname.localeCompare(b.displayname));
         } else if (featuredSortMode === 'genre') {
@@ -6359,7 +7018,7 @@ if(window.HTMLAnchorElement) patchUrlProperty(HTMLAnchorElement.prototype,'href'
             ? resolvedId
             : buildDatabaseGameUrl(resolvedId);
 
-        launchSite(targetUrl, resolvedId, { blockNewTabs: true });
+        launchSite(targetUrl, resolvedId, { blockNewTabs: true, noIframe: true });
     }
 
 function launchSite(targetUrl, pageTitle, options) {
@@ -6371,6 +7030,7 @@ function launchSite(targetUrl, pageTitle, options) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
 
+    // Open window synchronously to avoid popup blocker
     const win = window.open('about:blank', '_blank');
     if (!win) {
         alert('Pop-up blocked! Please allow popups for this site.');
@@ -6379,22 +7039,76 @@ function launchSite(targetUrl, pageTitle, options) {
 
     try {
         win.opener = null;
-    } catch (err) {
-        // Some browsers may not allow updating opener.
-    }
+    } catch (err) {}
 
-    const renderIframeWrapper = function (urlValue) {
-        const safeUrl = String(urlValue || '')
-            .replace(/&/g, '&amp;')
-            .replace(/"/g, '&quot;');
-        const sandboxAttr = ' sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation allow-popups allow-popups-to-escape-sandbox allow-downloads"';
-        win.document.open();
-        win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '"' + sandboxAttr + ' allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><script>(function(){window.alert=function(){};window.confirm=function(){return false;};window.prompt=function(){return null;};})();<\/script></body></html>');
-        win.document.close();
-    };
+    // Write loading state
+    win.document.open();
+    win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center}</style></head><body><div style="color:#7da8c2;font-size:14px">Loading...</div></body></html>');
+    win.document.close();
 
-    renderIframeWrapper(normalizedUrl);
-   
+    // Fetch the game content and write it directly
+    var bustUrl = normalizedUrl + (normalizedUrl.indexOf('?') !== -1 ? '&' : '?') + 't=' + Date.now();
+
+    fetch(bustUrl)
+        .then(function(response) { return response.text(); })
+        .then(function(text) {
+            // For database games (noIframe) and school mode web games,
+            // inject a base tag so relative URLs resolve to the CDN.
+            // jsDelivr has proper CORS headers, so scripts load directly.
+            if (options && options.noIframe) {
+                return rewriteRelativeUrls(text, normalizedUrl);
+            } else {
+                var inSchool2 = false;
+                try { inSchool2 = window.parent && window.parent.schoolMode; } catch(e) {}
+                if (inSchool2) {
+                    return rewriteRelativeUrls(text, normalizedUrl);
+                } else {
+                    return text;
+                }
+            }
+        })
+        .then(function(finalHtml) {
+            try {
+                win.document.open();
+                win.document.write(finalHtml);
+                win.document.close();
+            } catch (e) {
+                // If document.write fails (e.g. restricted about:blank),
+                // fall back to blob URL
+                try {
+                    var blob = new Blob([finalHtml], { type: 'text/html' });
+                    var blobUrl = URL.createObjectURL(blob);
+                    win.location.href = blobUrl;
+                } catch (e2) {
+                    // Last resort: redirect to the original URL
+                    win.location.href = normalizedUrl;
+                }
+            }
+        })
+        .catch(function() {
+            if (options && options.noIframe) {
+                // Database game: redirect to original URL as fallback
+                win.location.href = normalizedUrl;
+            } else {
+                // Check school mode for web games
+                var inSchool = false;
+                try { inSchool = window.parent && window.parent.schoolMode; } catch(e) {}
+                if (inSchool) {
+                    // School mode: CORS blocked, no iframe
+                    win.document.open();
+                    win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center}</style></head><body><div><h2 style="color:#ff6b6b;margin:0 0 8px">Blocked by CORS</h2><p style="color:#888;margin:0">Contact site admin.</p></div></body></html>');
+                    win.document.close();
+                } else {
+                    // Normal mode: iframe fallback
+                    var safeUrl = normalizedUrl.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+                    var sandboxAttr = ' sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation allow-popups allow-popups-to-escape-sandbox allow-downloads"';
+                    win.document.open();
+                    win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '"' + sandboxAttr + ' allow="fullscreen *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><script>(function(){window.alert=function(){};window.confirm=function(){return false;};window.prompt=function(){return null;};})();<\/script></body></html>');
+                    win.document.close();
+                }
+            }
+        });
+
     return true;
 }
 
@@ -6419,7 +7133,7 @@ function openInlinePage(targetUrl, titleText, options) {
         <iframe
             id="horion-inline-host-frame"
             src="about:blank"
-            allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *"
+            allow="fullscreen *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *"
             allowfullscreen
             style="border:none;width:100%;height:100%;background:#000;"
         ></iframe>
@@ -6446,7 +7160,7 @@ function openInlinePage(targetUrl, titleText, options) {
     if (hostFrame && hostFrame.contentWindow && hostFrame.contentWindow.document) {
         const titleAttr = String(titleText || 'Extension');
 
-        const wrapperHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + titleAttr + '</title><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden}iframe{border:none;width:100%;height:100%;background:#000}</style></head><body><iframe src="' + normalizedUrl + '" allow="autoplay *; fullscreen *; xr-spatial-tracking *; encrypted-media *; clipboard-read *; clipboard-write *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen></iframe></body></html>';
+        const wrapperHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + titleAttr + '</title><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden}iframe{border:none;width:100%;height:100%;background:#000}</style></head><body><iframe src="' + normalizedUrl + '" allow="fullscreen *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen></iframe></body></html>';
         hostFrame.contentWindow.document.open();
         hostFrame.contentWindow.document.write(wrapperHtml);
         hostFrame.contentWindow.document.close();
@@ -7220,6 +7934,48 @@ function openSpecial(gamelink, gameTitle) {
     initParticles(); animateParticles();
 
     // ==========================================
+    // SCHOOL MODE - Games
+    // ==========================================
+    window.applySchoolMode = function(schoolMode) {
+        document.body.classList.toggle('school-mode', schoolMode);
+        // Re-render featured grid with/without school mode filtering
+        generateFeaturedGrid();
+        // Filter carousel slides in school mode
+        var slides = document.querySelectorAll('#fc-track .fc-slide');
+        slides.forEach(function(slide) {
+            var name = slide.getAttribute('data-fc-name');
+            if (!name) return;
+            var nameLower = name.trim().toLowerCase();
+            var game = (typeof featuredGames !== 'undefined') ? featuredGames.find(function(g) {
+                return String(g.displayname || '').trim().toLowerCase() === nameLower;
+            }) : null;
+            if (schoolMode && game && (game.type === 'web' || game.type === 'webnosandbox') && !game.schoolmode) {
+                slide.style.display = 'none';
+            } else {
+                slide.style.display = '';
+            }
+        });
+        // Rebuild carousel dots after filtering
+        if (typeof fcBuildDots === 'function') {
+            fcBuildDots();
+            if (typeof fcGoTo === 'function') fcGoTo(0, false);
+        } else {
+            // Try via the carousel IIFE
+            try {
+                var dotsWrap = document.getElementById('fc-dots');
+                if (dotsWrap) dotsWrap.innerHTML = '';
+            } catch(e) {}
+        }
+    };
+
+    // Check parent school mode on load
+    try {
+        if (window.parent && window.parent.schoolMode) {
+            document.body.classList.add('school-mode');
+        }
+    } catch(e) {}
+
+    // ==========================================
     // 6. INITIALIZATION & SEARCH
     // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
@@ -7278,7 +8034,8 @@ function openSpecial(gamelink, gameTitle) {
                 if (isFeaturedWebGame(currentFeaturedGame) || currentFeaturedGameUrlOverride) {
                     launchSite(targetUrl, currentFeaturedGame.displayname, { blockNewTabs: true });
                 } else {
-                    launchSite(targetUrl, currentFeaturedGame.displayname, { blockNewTabs: true });
+                    // Database game: need noIframe to inline resources and add base tag
+                    launchSite(targetUrl, currentFeaturedGame.displayname, { blockNewTabs: true, noIframe: true });
                 }
             });
         }
@@ -7341,6 +8098,12 @@ function openSpecial(gamelink, gameTitle) {
                 clearInterval(interval);
                 overlay.style.opacity = '0';
                 setTimeout(() => { overlay.style.visibility = 'hidden'; }, 500);
+                // Notify parent shell to show school mode popup
+                try {
+                    if (window.parent && typeof window.parent.showSchoolPopup === 'function') {
+                        window.parent.showSchoolPopup();
+                    }
+                } catch(e) {}
             } else {
                 width += Math.random() * 5;
                 if(width > 100) width = 100;
@@ -7357,7 +8120,9 @@ function openSpecial(gamelink, gameTitle) {
         var fcAnimating = false;
 
         function fcSlides() {
-            return Array.from(document.querySelectorAll('#fc-track .fc-slide'));
+            return Array.from(document.querySelectorAll('#fc-track .fc-slide')).filter(function(s) {
+                return s.style.display !== 'none';
+            });
         }
 
         function fcTotal() { return fcSlides().length; }
@@ -7398,6 +8163,8 @@ function openSpecial(gamelink, gameTitle) {
 
         window.fcPrev = function () { fcGoTo(fcIndex - 1, true); };
         window.fcNext = function () { fcGoTo(fcIndex + 1, true); };
+        window.fcBuildDots = fcBuildDots;
+        window.fcGoTo = fcGoTo;
 
         window.fcOpenGame = function (el) {
             if (typeof openFeaturedGamePage !== 'function' || typeof featuredGames === 'undefined') return;
@@ -7461,6 +8228,7 @@ function openSpecial(gamelink, gameTitle) {
             overflow-x: hidden;
             overflow-y: scroll;
             scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
             scroll-padding-top: var(--navbar-content-offset, 125px);
         }
 
@@ -7529,6 +8297,7 @@ function openSpecial(gamelink, gameTitle) {
             left: 0;
             right: 0;
             z-index: 100;
+            -webkit-backdrop-filter: blur(5px);;
             backdrop-filter: blur(5px);
         }
 
@@ -7618,6 +8387,7 @@ function openSpecial(gamelink, gameTitle) {
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(0, 112, 255, 0.1);
             border-radius: 4px;
+            -webkit-backdrop-filter: blur(2px);;
             backdrop-filter: blur(2px);
             min-height: 80vh;
             box-sizing: border-box;
@@ -7773,6 +8543,7 @@ function openSpecial(gamelink, gameTitle) {
             justify-content: space-between;
             align-items: center;
             margin-bottom: 40px;
+            -webkit-backdrop-filter: blur(2px);;
             backdrop-filter: blur(2px);
         }
        
@@ -7842,6 +8613,7 @@ function openSpecial(gamelink, gameTitle) {
             border: 1px solid rgba(0, 112, 255, 0.2);
             background: rgba(0, 12, 24, 0.75);
             border-radius: 0;
+            -webkit-backdrop-filter: blur(2px);;
             backdrop-filter: blur(2px);
         }
 
@@ -8270,7 +9042,65 @@ function openSpecial(gamelink, gameTitle) {
             fill: #000;
         }
 
-        .youtube-frame {
+        /* Simplified YouTube link box (non-school mode) */
+.youtube-simple-box {
+    display: none;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 16px;
+    width: 100%;
+    max-width: 600px;
+}
+
+body:not(.school-mode) .youtube-simple-box {
+    display: flex;
+}
+
+body:not(.school-mode) .youtube-search-bar {
+    display: none;
+}
+
+body:not(.school-mode) .youtube-frame {
+    display: none;
+}
+
+.youtube-simple-url {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid rgba(0, 112, 255, 0.35);
+    border-right: none;
+    background: rgba(0, 8, 18, 0.7);
+    color: #8bb4cc;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.youtube-simple-continue {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 20px;
+    border: 1px solid rgba(0, 112, 255, 0.35);
+    background: rgba(0, 112, 255, 0.1);
+    color: #d9ecfb;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.youtube-simple-continue:hover { background: rgba(0, 112, 255, 0.2); }
+
+.youtube-frame {
             width: 100%;
             min-height: 72vh;
             border: 1px solid rgba(110, 170, 215, 0.25);
@@ -8412,6 +9242,7 @@ function openSpecial(gamelink, gameTitle) {
             width: 100%;
             max-width: 700px;
             margin: 20px auto;
+            -webkit-backdrop-filter: blur(5px);;
             backdrop-filter: blur(5px);
         }
 
@@ -8440,6 +9271,7 @@ function openSpecial(gamelink, gameTitle) {
             z-index: 9999;
             justify-content: center;
             align-items: center;
+            -webkit-backdrop-filter: blur(5px);;
             backdrop-filter: blur(5px);
         }
 
@@ -8550,7 +9382,13 @@ function openSpecial(gamelink, gameTitle) {
 
     <div id="view-youtube" class="view-section">
         <h2 style="font-weight:300; letter-spacing:4px; border-bottom:1px solid #333; padding-bottom:10px; margin-top:0;">YOUTUBE</h2>
-        <div class="youtube-shell">
+        <div id="youtube-school-msg" style="display:none; text-align:center; padding:80px 20px;">
+            <div style="max-width:420px; margin:0 auto; border:1px solid rgba(0,180,255,0.2); border-radius:14px; background:rgba(0,0,0,0.6); padding:40px 30px;">
+                <h2 style="font-size:1.6rem; font-weight:800; letter-spacing:0.04em; margin:0 0 14px; color:#e8f6ff;">YouTube</h2>
+                <p style="color:#8bb4cc; font-size:1rem; line-height:1.6; margin:0;">Youtube is being worked on and is hidden in School Mode.</p>
+            </div>
+        </div>
+        <div class="youtube-shell" id="youtube-normal-shell">
             <form id="youtube-search-form" class="youtube-search-bar">
                 <input id="youtube-search-input" type="text" class="search-input" placeholder="Enter YouTube video ID or link" autocomplete="off" spellcheck="false">
                 <button type="submit" class="youtube-load-btn" aria-label="Load YouTube video">
@@ -8559,7 +9397,14 @@ function openSpecial(gamelink, gameTitle) {
                     </svg>
                 </button>
             </form>
-            <iframe id="youtube-frame" class="youtube-frame" src="about:blank" allow="autoplay; fullscreen; encrypted-media; picture-in-picture"></iframe>
+            <iframe id="youtube-frame" class="youtube-frame" src="about:blank" allow="fullscreen; picture-in-picture"></iframe>
+        </div>
+        <!-- Simple YouTube link box (non-school mode) -->
+        <div id="youtube-simple-box" class="youtube-simple-box">
+            <div class="youtube-simple-url" id="youtube-simple-url">Enter a YouTube link above</div>
+            <a id="youtube-simple-continue" class="youtube-simple-continue" href="#" target="_blank" rel="noopener noreferrer">
+                Continue <span>&#8594;</span>
+            </a>
         </div>
     </div>
 
@@ -8568,7 +9413,7 @@ function openSpecial(gamelink, gameTitle) {
 
         <div class="sports-ad-warning sports-primary-warning">
             School networks typically block Horion's live sports streams. It's great at home, but if your at school, consider using 
-            <a href="#" onclick="launchSite('https://streami.su/'); return false;"> streami.su in about:blank</a>
+            <a href="#" id="sports-streami-link" onclick="openOriginalSports(event); return false;"> xyzstreams.st in about:blank</a>
         </div>
 
         <div class="sports-ad-warning sports-hidden-warning">
@@ -8619,7 +9464,7 @@ function openSpecial(gamelink, gameTitle) {
                     id="sports-stream-frame"
                     class="sports-player-frame"
                     src="about:blank"
-                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                    allow="fullscreen; picture-in-picture"
                 ></iframe>
 
                 <div id="sports-player-status" class="sports-player-status">Choose a match to load stream sources.</div>
@@ -8638,7 +9483,7 @@ function openSpecial(gamelink, gameTitle) {
 <footer class="tv-site-footer">
     <div class="tv-site-footer-inner">
         <div class="tv-site-footer-brand">
-            <img src="./cmg.png" alt="CMG" class="tv-site-footer-logo">
+            <img src="assets/cmg.png" alt="CMG" class="tv-site-footer-logo">
         </div>
         <div class="tv-site-footer-links">
             <a href="https://www.youtube.com/channel/UCQrYBaYJDoSihLEx-gP820g" target="_blank" rel="noopener noreferrer">YouTube</a>
@@ -9031,7 +9876,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
                 fetch(`${TMDB_BASE}/trending/all/week?api_key=${TMDB_API_KEY}&page=${page}`).then(r=>r.json())
             );
             const results = await Promise.all(promises);
-            const combined = results.flatMap(res => res.results);
+            const combined = results.reduce((arr, res) => arr.concat(res.results || []), []);
            
             return combined.map(normalizeTMDB).filter(i => i !== null).slice(0, 50);
         },
@@ -9272,7 +10117,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
         }
         const embedUrl = `https://invidious.tiekoetter.com/embed/${encodeURIComponent(videoId)}`;
         const escaped = embedUrl.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
-        frame.srcdoc = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + escaped + '" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></body></html>';
+        frame.srcdoc = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + escaped + '" allow="fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></body></html>';
     }
 
     function initYoutubeView() {
@@ -9285,6 +10130,16 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
             form.dataset.bound = '1';
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
+                var videoId = extractYoutubeVideoId(buildYoutubeSearchUrl(input ? input.value : ''));
+                // Update simple link box (non-school mode)
+                var urlBox = document.getElementById('youtube-simple-url');
+                var continueLink = document.getElementById('youtube-simple-continue');
+                if (videoId) {
+                    var ytUrl = 'https://www.youtube.com/watch?v=' + videoId;
+                    if (urlBox) urlBox.textContent = ytUrl;
+                    if (continueLink) continueLink.href = ytUrl;
+                }
+                // Still render the frame for school mode (which will be hidden)
                 renderYoutubeFrame(buildYoutubeSearchUrl(input ? input.value : ''));
             });
         }
@@ -9618,7 +10473,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
         const sandboxAttr = opts.disableInnerSandbox
             ? ''
             : ' sandbox="allow-same-origin allow-scripts allow-forms allow-presentation allow-pointer-lock"';
-        return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '"' + sandboxAttr + ' allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe><script>(function(){const frame=document.querySelector("iframe");if(!frame){return;}const enforceSelf=function(){try{const win=frame.contentWindow;if(!win){return;}win.open=function(url){if(url){win.location.assign(url);}return win;};}catch(err){}};frame.addEventListener("load",enforceSelf);enforceSelf();})();<\/script></body></html>';
+        return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '"' + sandboxAttr + ' allow="fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe><script>(function(){const frame=document.querySelector("iframe");if(!frame){return;}const enforceSelf=function(){try{const win=frame.contentWindow;if(!win){return;}win.open=function(url){if(url){win.location.assign(url);}return win;};}catch(err){}};frame.addEventListener("load",enforceSelf);enforceSelf();})();<\/script></body></html>';
     }
 
     function setLockedEmbedFrame(frame, targetUrl, options) {
@@ -9700,7 +10555,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
 
         frame.src = 'about:blank';
     const primaryAttr = escapeHtmlAttribute(normalizedUrl);
-    frame.srcdoc = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + primaryAttr + '" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></body></html>';
+    frame.srcdoc = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + primaryAttr + '" allow="fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe></body></html>';
     }
 
     function formatMatchTime(timestamp) {
@@ -10283,15 +11138,18 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
                         <button type="button" class="btn-secondary" onclick="refreshTvPlayer()">REFRESH</button>
                         <button type="button" class="btn-secondary" onclick="openTvPlayerInAboutBlank()">OPEN IN ABOUT:BLANK</button>
                     </div>
-                    <div class="server-bar">
+                    <div class="server-bar" id="tv-server-bar">
                         <div>
                             <div style="color:white; font-weight:bold;">${episodeTitleText}</div>
                             <div style="color:var(--text-grey); font-size:0.8rem;">SOURCE: ${state.currentServer === 'server1' ? 'VidSrc 3 (S1)' : state.currentServer === 'server2' ? 'VidSrc 1 (S2)' : 'VidSrcMe (S3)'}</div>
                         </div>
-                        <div style="display:flex; gap:10px;">
+                        <div style="display:flex; gap:10px; align-items:center;" id="tv-server-buttons">
                             <button onclick="switchServer('server1')" class="btn-secondary ${state.currentServer === 'server1' ? 'active' : ''}">S1</button>
                             <button onclick="switchServer('server2')" class="btn-secondary ${state.currentServer === 'server2' ? 'active' : ''}">S2</button>
                             <button onclick="switchServer('server3')" class="btn-secondary ${state.currentServer === 'server3' ? 'active' : ''}">S3</button>
+                        </div>
+                        <div id="tv-school-server-msg" style="display:none; color:var(--neon-blue); font-family:'JetBrains Mono', monospace; font-size:0.85rem; letter-spacing:0.04em;">
+                            Only Server 3 is available on School Mode.
                         </div>
                     </div>
                     
@@ -10452,16 +11310,25 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
     }
 
     function switchServer(server) {
+        // School mode: only allow server 3
+        try {
+            if (window.parent && window.parent.schoolMode && server !== 'server3') return;
+        } catch(e) {}
         state.currentServer = server;
         renderDetailsView();
     }
 
     function getProviderUrl(imdbId, tmdbId, type, season = null, episode = null) {
+        // School mode: force server 3
+        var effectiveServer = state.currentServer;
+        try {
+            if (window.parent && window.parent.schoolMode) effectiveServer = 'server3';
+        } catch(e) {}
         const idToUse = encodeURIComponent(String(tmdbId || imdbId || ''));
         const seasonValue = encodeURIComponent(String(season || 1));
         const episodeValue = encodeURIComponent(String(episode || 1));
 
-        if (state.currentServer === 'server1') {
+        if (effectiveServer === 'server1') {
             if (type === 'movie') {
                 return `https://www.vidsrc.wtf/api/3/movie?color=0278fd&id=${idToUse}`;
             }
@@ -10469,7 +11336,7 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
             return `https://www.vidsrc.wtf/api/3/tv?id=${idToUse}&s=${seasonValue}&e=${episodeValue}`;
         }
 
-        if (state.currentServer === 'server2') {
+        if (effectiveServer === 'server2') {
             if (type === 'movie') {
                 return `https://www.vidsrc.wtf/api/1/movie?color=0278fd&id=${idToUse}`;
             }
@@ -10488,6 +11355,41 @@ const TMDB_API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb'; // Public demo key
 
         return `https://vidsrcme.ru/embed/tv?tmdb=${tmdbOnlyId}&season=${seasonValue}&episode=${episodeValue}`;
     }
+
+    // ==========================================
+    // SCHOOL MODE - TV
+    // ==========================================
+    window.applySchoolMode = function(schoolMode) {
+        document.body.classList.toggle('school-mode', schoolMode);
+
+        // YouTube: hide/show
+        var ytMsg = document.getElementById('youtube-school-msg');
+        var ytShell = document.getElementById('youtube-normal-shell');
+        if (ytMsg) ytMsg.style.display = schoolMode ? 'block' : 'none';
+        if (ytShell) ytShell.style.display = schoolMode ? 'none' : '';
+
+        // TV server: force server 3 and show message
+        if (schoolMode) {
+            state.currentServer = 'server3';
+        }
+        // Show/hide server buttons in details view
+        var serverButtons = document.getElementById('tv-server-buttons');
+        var schoolMsg = document.getElementById('tv-school-server-msg');
+        if (serverButtons) serverButtons.style.display = schoolMode ? 'none' : 'flex';
+        if (schoolMsg) schoolMsg.style.display = schoolMode ? 'block' : 'none';
+
+        // Sports link text stays as xyzstreams.st in both modes
+
+        // Re-render details if currently viewing
+        if (document.getElementById('view-details') && document.getElementById('view-details').classList.contains('active') && state.currentShow) {
+            renderDetailsView();
+        }
+
+        // If currently on YouTube view, refresh
+        if (document.getElementById('view-youtube') && document.getElementById('view-youtube').classList.contains('active')) {
+            launchYoutubeTool();
+        }
+    };
 
     // ==========================================
     // 7. YOUTUBE NAV LAUNCHER LOGIC
@@ -10818,7 +11720,7 @@ function openInlineTvPage(targetUrl, titleText, options) {
         <iframe
             id="horion-tv-inline-host-frame"
             src="about:blank"
-            allow="autoplay; encrypted-media; fullscreen"
+            allow="fullscreen"
             style="border:none;width:100%;height:100%;background:#000;"
         ></iframe>
     `;
@@ -10863,7 +11765,7 @@ function openInlineTvPage(targetUrl, titleText, options) {
         if (!hostFrame || !hostFrame.contentWindow || !hostFrame.contentWindow.document) return;
         const titleAttr = String(titleText || 'TV Tool');
         const launchUrl = String(urlOverride || normalizedUrl || '').trim();
-        const wrapperHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + titleAttr + '</title><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden}iframe{border:none;width:100%;height:100%;background:#000}</style></head><body><iframe id="horion-tv-inline-inner-frame" src="' + launchUrl + '" allow="autoplay; encrypted-media; fullscreen; clipboard-read; clipboard-write; picture-in-picture; screen-wake-lock"></iframe><script>(function(){const frame=document.getElementById("horion-tv-inline-inner-frame");if(!frame)return;const inspect=function(url){if(!url||typeof window.__horionReloadSelf!=="function")return;if(String(url).toLowerCase().indexOf("' + UBEAST_MATCH_TEXT + '")!==-1){window.__horionReloadSelf(url);}};frame.addEventListener("load",function(){inspect(frame.getAttribute("src")||frame.src);try{inspect(frame.contentWindow&&frame.contentWindow.location?frame.contentWindow.location.href:"");}catch(err){}});const observer=new MutationObserver(function(){inspect(frame.getAttribute("src")||frame.src);});observer.observe(frame,{attributes:true,attributeFilter:["src"]});setInterval(function(){inspect(frame.getAttribute("src")||frame.src);try{inspect(frame.contentWindow&&frame.contentWindow.location?frame.contentWindow.location.href:"");}catch(err){}},1000);inspect(frame.getAttribute("src")||frame.src);})();<\/script></body></html>';
+        const wrapperHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + titleAttr + '</title><base target="_self"><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden}iframe{border:none;width:100%;height:100%;background:#000}</style></head><body><iframe id="horion-tv-inline-inner-frame" src="' + launchUrl + '" allow="fullscreen; picture-in-picture; screen-wake-lock"></iframe><script>(function(){const frame=document.getElementById("horion-tv-inline-inner-frame");if(!frame)return;const inspect=function(url){if(!url||typeof window.__horionReloadSelf!=="function")return;if(String(url).toLowerCase().indexOf("' + UBEAST_MATCH_TEXT + '")!==-1){window.__horionReloadSelf(url);}};frame.addEventListener("load",function(){inspect(frame.getAttribute("src")||frame.src);try{inspect(frame.contentWindow&&frame.contentWindow.location?frame.contentWindow.location.href:"");}catch(err){}});const observer=new MutationObserver(function(){inspect(frame.getAttribute("src")||frame.src);});observer.observe(frame,{attributes:true,attributeFilter:["src"]});setInterval(function(){inspect(frame.getAttribute("src")||frame.src);try{inspect(frame.contentWindow&&frame.contentWindow.location?frame.contentWindow.location.href:"");}catch(err){}},1000);inspect(frame.getAttribute("src")||frame.src);})();<\/script></body></html>';
         hostFrame.contentWindow.__horionReloadSelf = function (nextUrl) {
             if (isClosing) return;
             const detectedUrl = String(nextUrl || launchUrl || normalizedUrl || '').trim();
@@ -10952,6 +11854,19 @@ function launchYoutubeTool() {
         // Ignore parent messaging errors.
     }
     router('youtube');
+    // School mode check
+    try {
+        var isSchool = window.parent && window.parent.schoolMode;
+        var msgEl = document.getElementById('youtube-school-msg');
+        var shellEl = document.getElementById('youtube-normal-shell');
+        if (isSchool) {
+            if (msgEl) msgEl.style.display = 'block';
+            if (shellEl) shellEl.style.display = 'none';
+        } else {
+            if (msgEl) msgEl.style.display = 'none';
+            if (shellEl) shellEl.style.display = '';
+        }
+    } catch(e) {}
 }
 
 function launchSportsTool() {
@@ -10962,7 +11877,7 @@ function openOriginalSports(event) {
     if (event && typeof event.preventDefault === 'function') {
         event.preventDefault();
     }
-    launchSite('https://streami.su/');
+    launchSite('https://xyzstreams.st/');
 }
 
     // ==========================================
@@ -11001,8 +11916,19 @@ function openOriginalSports(event) {
     <script>
         const gamesTemplate = document.getElementById('games-app-template');
         const tvTemplate = document.getElementById('tv-app-template');
-        const GAMES_APP_HTML = gamesTemplate.value || gamesTemplate.textContent || '';
-        const TV_APP_HTML = tvTemplate.value || tvTemplate.textContent || '';
+        // Inject a <base> tag so relative URLs (e.g. assets/*.png) resolve correctly
+        // inside the srcdoc iframe context.
+        var _pageBase = window.location.href.split('#')[0];
+        function _injectBase(htmlStr) {
+            if (!htmlStr) return htmlStr;
+            var baseTag = '<base href="' + _pageBase + '">';
+            if (/<head[^>]*>/i.test(htmlStr)) {
+                return htmlStr.replace(/<head[^>]*>/i, function(m) { return m + baseTag; });
+            }
+            return baseTag + htmlStr;
+        }
+        const GAMES_APP_HTML = _injectBase(gamesTemplate.value || gamesTemplate.textContent || '');
+        const TV_APP_HTML = _injectBase(tvTemplate.value || tvTemplate.textContent || '');
 
         const model = {
             mode: 'games',
@@ -11918,6 +12844,99 @@ function openOriginalSports(event) {
 
             setInterval(enforceShellLayoutIntegrity, 1200);
         }
+
+        // ===== SCHOOL MODE =====
+        window.schoolMode = false;
+
+        // Global: applies school mode to all iframes + toggles exit dock
+        function applySchoolModeToFrames(mode) {
+            window.schoolMode = mode;
+            var gamesFrame = document.getElementById('games-frame');
+            if (gamesFrame && gamesFrame.contentWindow) {
+                try {
+                    if (typeof gamesFrame.contentWindow.applySchoolMode === 'function') {
+                        gamesFrame.contentWindow.applySchoolMode(mode);
+                    }
+                } catch (e) {}
+            }
+            var tvFrame = document.getElementById('tv-frame');
+            if (tvFrame && tvFrame.contentWindow) {
+                try {
+                    if (typeof tvFrame.contentWindow.applySchoolMode === 'function') {
+                        tvFrame.contentWindow.applySchoolMode(mode);
+                    }
+                } catch (e) {}
+            }
+        }
+
+        // Called by the games iframe when its boot animation finishes
+        window.showSchoolPopup = function() {
+            // Check if user opted out
+            try {
+                if (localStorage.getItem('horion_school_popup_off') === '1') return;
+            } catch(e) {}
+
+            var overlay = document.getElementById('school-mode-popup');
+            if (!overlay) return;
+            overlay.style.display = 'flex';
+            overlay.classList.add('active');
+
+            var enterBtn = document.getElementById('school-mode-enter');
+            var normalBtn = document.getElementById('school-mode-normal');
+            var dontShowBtn = document.getElementById('school-mode-dontshow');
+
+            function dismiss(enteredSchool) {
+                overlay.classList.remove('active');
+                overlay.style.display = 'none';
+                applySchoolModeToFrames(enteredSchool);
+            }
+
+            // Remove old listeners by cloning nodes
+            if (enterBtn) {
+                var newEnter = enterBtn.cloneNode(true);
+                enterBtn.parentNode.replaceChild(newEnter, enterBtn);
+                newEnter.addEventListener('click', function() { dismiss(true); });
+            }
+            if (normalBtn) {
+                var newNormal = normalBtn.cloneNode(true);
+                normalBtn.parentNode.replaceChild(newNormal, normalBtn);
+                newNormal.addEventListener('click', function() { dismiss(false); });
+            }
+            if (dontShowBtn) {
+                var newDont = dontShowBtn.cloneNode(true);
+                dontShowBtn.parentNode.replaceChild(newDont, dontShowBtn);
+                newDont.addEventListener('click', function() {
+                    try { localStorage.setItem('horion_school_popup_off', '1'); } catch(e) {}
+                    dismiss(false);
+                });
+            }
+        };
+
+        // Apply school mode when frames finish loading
+        (function() {
+            var gamesFrameEl = document.getElementById('games-frame');
+            if (gamesFrameEl) {
+                gamesFrameEl.addEventListener('load', function() {
+                    setTimeout(function() {
+                        var f = document.getElementById('games-frame');
+                        if (f && f.contentWindow && typeof f.contentWindow.applySchoolMode === 'function') {
+                            try { f.contentWindow.applySchoolMode(window.schoolMode); } catch(e) {}
+                        }
+                    }, 100);
+                });
+            }
+            var tvFrameEl = document.getElementById('tv-frame');
+            if (tvFrameEl) {
+                tvFrameEl.addEventListener('load', function() {
+                    setTimeout(function() {
+                        var f = document.getElementById('tv-frame');
+                        if (f && f.contentWindow && typeof f.contentWindow.applySchoolMode === 'function') {
+                            try { f.contentWindow.applySchoolMode(window.schoolMode); } catch(e) {}
+                        }
+                    }, 100);
+                });
+            }
+        })();
 
         init();
     
