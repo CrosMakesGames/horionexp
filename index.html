@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Horion</title>
-    <link rel="icon" href="assets/favicon.ico" sizes="any">
-    <link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2145,7 +2145,7 @@ canvas {
                             <p class="fc-desc">Play a variety of online party games, made specifically for Horion. Created by CMG.</p>
                         </div>
                         <div class="fc-logo-wrap">
-                            <img class="fc-logo" src="assets/horionpartythumbnail.png" alt="" draggable="false">
+                            <img class="fc-logo" src="horionpartythumbnail.png" alt="" draggable="false">
                         </div>
                     </div>
                     <div class="fc-slide" data-fc-name="Balatro" onclick="fcOpenGame(this)">
@@ -2292,7 +2292,7 @@ canvas {
         <div class="credits-title">CREDITS & LINKS</div>
         <p> <b>Developed By:</b><br> CMG</p>
         <div class="credits-logo-wrap">
-            <img src="assets/cmg.png" alt="CMG logo" class="credits-logo">
+            <img src="cmg.png" alt="CMG logo" class="credits-logo">
         </div>
         </p><br><br>
         <a href="https://bit.ly/horiongames" target="_blank" class="credit-link">> Links Document</a>
@@ -2304,7 +2304,7 @@ canvas {
 <footer class="site-footer">
     <div class="site-footer-inner">
         <div class="site-footer-brand">
-            <img src="assets/cmg.png" alt="CMG" class="site-footer-logo">
+            <img src="cmg.png" alt="CMG" class="site-footer-logo">
         </div>
         <div class="site-footer-links">
             <a href="https://www.youtube.com/channel/UCQrYBaYJDoSihLEx-gP820g" target="_blank" rel="noopener noreferrer">YouTube</a>
@@ -2321,7 +2321,7 @@ canvas {
     // 1. DATA CONFIGURATION
     // ==========================================
     const OFFICIAL_GITHUB_URL = 'https://horion.crosmakesgames.com';
-    const DATABASE_GAME_BASE_URL = 'https://crosmakesgames.com/ugs-singlefile/UGS-Files/';
+    const DATABASE_GAME_BASE_URL = 'https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@latest/UGS-Files/';
     const PORTAL_DOC_URL = 'https://bit.ly/horiongames';
     let launchedFromAboutBlankBridge = false;
 
@@ -2549,7 +2549,7 @@ canvas {
 
     { filename: 'clpapaswingeria', displayname: "Papa's Wingeria", desc: 'Papa\'s Wingeria is a restaurant management game where you cook and serve wings.', image: 'https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/0ef4d3c4bd35cc2e9b65f3da07448fc2/papas-wingeria.jfif', recommended: ['Papa\'s Cheeseria', 'Burrito Bison: Launcha Libre', 'Cookie Clicker'] },
     { filename: 'https://badparentingame.io/play/buckshot-roulette/', displayname: "Buckshot Roulette", desc: 'Shoot yourself or the dealer in this russian-roulette with shotguns game.', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyFj5uK14h_47xiDyyzMipCpRvNfY3XcTtPeABOTxluQ&s=10', type:'web', recommended: ['Balatro', 'Space Company', 'Shapez.io'] },
-    { filename: 'https://horionparty.crosmakesgames.com', displayname: "Horion Party", desc: 'Play a variety of online party games, made specifically for Horion. Created by CMG.', image: 'assets/horionpartythumbnail.png', type:'web', recommended: ['8 Ball: Classic', 'Gartic Phone', 'Skribbl.io'], schoolmode:true },
+    { filename: 'https://horionparty.crosmakesgames.com', displayname: "Horion Party", desc: 'Play a variety of online party games, made specifically for Horion. Created by CMG.', image: 'horionpartythumbnail.png', type:'web', recommended: ['8 Ball: Classic', 'Gartic Phone', 'Skribbl.io'], schoolmode:true },
 ];
     const FEATURED_GENRES = ['Rougelike', 'Action', 'Strategy', 'Platformer'];
     const FEATURED_GENRE_BY_NAME = {
@@ -9483,7 +9483,7 @@ body:not(.school-mode) .youtube-frame {
 <footer class="tv-site-footer">
     <div class="tv-site-footer-inner">
         <div class="tv-site-footer-brand">
-            <img src="assets/cmg.png" alt="CMG" class="tv-site-footer-logo">
+            <img src="cmg.png" alt="CMG" class="tv-site-footer-logo">
         </div>
         <div class="tv-site-footer-links">
             <a href="https://www.youtube.com/channel/UCQrYBaYJDoSihLEx-gP820g" target="_blank" rel="noopener noreferrer">YouTube</a>
@@ -11916,7 +11916,7 @@ function openOriginalSports(event) {
     <script>
         const gamesTemplate = document.getElementById('games-app-template');
         const tvTemplate = document.getElementById('tv-app-template');
-        // Inject a <base> tag so relative URLs (e.g. assets/*.png) resolve correctly
+        // Inject a <base> tag so relative URLs (e.g. *.png) resolve correctly
         // inside the srcdoc iframe context.
         var _pageBase = window.location.href.split('#')[0];
         function _injectBase(htmlStr) {

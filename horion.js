@@ -1,6 +1,6 @@
 const gamesTemplate = document.getElementById('games-app-template');
         const tvTemplate = document.getElementById('tv-app-template');
-        // Inject a <base> tag so relative URLs (e.g. assets/*.png) resolve correctly
+        // Inject a <base> tag so relative URLs (e.g. *.png) resolve correctly
         // inside the srcdoc iframe context.
         var _pageBase = window.location.href.split('#')[0];
         function _injectBase(htmlStr) {
