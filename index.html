@@ -2322,6 +2322,102 @@ canvas {
     // ==========================================
     const OFFICIAL_GITHUB_URL = 'https://horion.crosmakesgames.com';
     const DATABASE_GAME_BASE_URL = 'https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@latest/UGS-Files/';
+
+    // Multiple CDN mirrors for database games — if one is blocked or has CORS
+    // stripped by a school proxy, the next is tried automatically.
+    const DATABASE_GAME_CDN_URLS = [
+        'https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@main/UGS-Files/',
+        'https://raw.githubusercontent.com/bubbls/ugs-singlefile/main/UGS-Files/',
+        'https://cdn.statically.io/gh/bubbls/ugs-singlefile@main/UGS-Files/'
+    ];
+
+    // Fallback CORS proxy (last resort when all direct CDNs fail).
+    const CORS_PROXY_URL = 'https://api.allorigins.win/raw?url=';
+
+    // Try fetch() first, then XMLHttpRequest — some school filters block the
+    // Fetch API but allow XHR, or vice versa.
+    function fetchWithFallback(url) {
+        // Attempt 1: fetch with cache-buster
+        var bustUrl = url + (url.indexOf('?') !== -1 ? '&' : '?') + 't=' + Date.now();
+        return fetch(bustUrl)
+            .then(function(res) {
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.text();
+            })
+            .catch(function() {
+                // Attempt 2: fetch without cache-buster
+                return fetch(url)
+                    .then(function(res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.text();
+                    });
+            })
+            .catch(function() {
+                // Attempt 3: XMLHttpRequest with cache-buster
+                return new Promise(function(resolve, reject) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', bustUrl, true);
+                    xhr.timeout = 15000;
+                    xhr.onload = function() {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            resolve(xhr.responseText);
+                        } else {
+                            reject(new Error('XHR HTTP ' + xhr.status));
+                        }
+                    };
+                    xhr.onerror = function() { reject(new Error('XHR error')); };
+                    xhr.ontimeout = function() { reject(new Error('XHR timeout')); };
+                    xhr.send();
+                });
+            })
+            .catch(function() {
+                // Attempt 4: XMLHttpRequest without cache-buster
+                return new Promise(function(resolve, reject) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', url, true);
+                    xhr.timeout = 15000;
+                    xhr.onload = function() {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            resolve(xhr.responseText);
+                        } else {
+                            reject(new Error('XHR HTTP ' + xhr.status));
+                        }
+                    };
+                    xhr.onerror = function() { reject(new Error('XHR error')); };
+                    xhr.ontimeout = function() { reject(new Error('XHR timeout')); };
+                    xhr.send();
+                });
+            });
+    }
+
+    // Fetch a database game's HTML, trying multiple CDNs and falling back
+    // to a CORS proxy. Returns a Promise that resolves to { html, baseUrl }.
+    function fetchDatabaseGameHtml(gameId) {
+        var fileName = encodeURIComponent(String(gameId || '').trim()) + '.html';
+
+        // Try each CDN in order
+        var cdnPromise = DATABASE_GAME_CDN_URLS.reduce(function(promise, baseUrl) {
+            return promise.catch(function() {
+                var url = baseUrl + fileName;
+                return fetchWithFallback(url).then(function(html) {
+                    return { html: html, baseUrl: url };
+                });
+            });
+        }, Promise.reject());
+
+        // Last resort: CORS proxy wrapping the first CDN URL
+        return cdnPromise.catch(function() {
+            var proxyUrl = CORS_PROXY_URL + encodeURIComponent(DATABASE_GAME_CDN_URLS[0] + fileName);
+            return fetch(proxyUrl)
+                .then(function(res) {
+                    if (!res.ok) throw new Error('Proxy HTTP ' + res.status);
+                    return res.text();
+                })
+                .then(function(html) {
+                    return { html: html, baseUrl: DATABASE_GAME_CDN_URLS[0] + fileName };
+                });
+        });
+    }
     const PORTAL_DOC_URL = 'https://bit.ly/horiongames';
     let launchedFromAboutBlankBridge = false;
 
@@ -6179,25 +6275,12 @@ canvas {
         frameEl.src = 'about:blank';
         frameEl.srcdoc = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center}</style></head><body><div style="font-size:14px;color:#7da8c2">Loading...</div></body></html>';
 
-        var isSchoolMode = false;
-        try {
-            isSchoolMode = window.parent && window.parent.schoolMode;
-        } catch(e) {}
-
-        var bustUrl = targetUrl + (targetUrl.indexOf('?') !== -1 ? '&' : '?') + 't=' + Date.now();
-
-        if (isSchoolMode) {
-            // School mode: fetch and run directly, no iframe fallback
-            var isDb = !isFeaturedWebGame(game);
-            fetch(bustUrl)
-                .then(function(response) { return response.text(); })
-                .then(function(text) {
+        if (!isFeaturedWebGame(game)) {
+            // Database game: use multi-CDN fallback with XHR + CORS proxy
+            fetchDatabaseGameHtml(game.filename)
+                .then(function(result) {
                     if (token !== featuredFrameLoadToken) return;
-                    if (isDb) {
-                        return processDatabaseGameHtml(text, targetUrl);
-                    } else {
-                        return rewriteRelativeUrls(text, targetUrl);
-                    }
+                    return processDatabaseGameHtml(result.html, result.baseUrl);
                 })
                 .then(function(processedHtml) {
                     if (token !== featuredFrameLoadToken) return;
@@ -6208,9 +6291,28 @@ canvas {
                 })
                 .catch(function() {
                     if (token !== featuredFrameLoadToken) return;
-                    // Fallback: try loading directly via iframe src
+                    // All CDNs failed — show error in frame
                     frameEl.removeAttribute('srcdoc');
-                    if (isDb) {
+                    frameEl.srcdoc = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center}</style></head><body><div><div style="color:#ff6b6b;font-size:18px;margin-bottom:8px">Failed to load game</div><div style="color:#888;font-size:14px">All CDNs blocked. Try again later.</div></div></body></html>';
+                    updateSimpleGameLinkBox(game, targetUrl);
+                    updateFeaturedFrameScrollMode();
+                });
+        } else {
+            // External web game: standard fetch
+            var bustUrl = targetUrl + (targetUrl.indexOf('?') !== -1 ? '&' : '?') + 't=' + Date.now();
+            fetch(bustUrl)
+                .then(function(response) { return response.text(); })
+                .then(function(text) {
+                    if (token !== featuredFrameLoadToken) return;
+                    frameEl.removeAttribute('srcdoc');
+                    setFrameContent(frameEl, text);
+                    updateSimpleGameLinkBox(game, targetUrl);
+                    updateFeaturedFrameScrollMode();
+                })
+                .catch(function() {
+                    if (token !== featuredFrameLoadToken) return;
+                    // Fallback: use iframe wrapper approach
+                    if (game.type === 'webnosandbox') {
                         frameEl.src = targetUrl || 'about:blank';
                     } else {
                         frameEl.src = 'about:blank';
@@ -6219,55 +6321,6 @@ canvas {
                     updateSimpleGameLinkBox(game, targetUrl);
                     updateFeaturedFrameScrollMode();
                 });
-        } else {
-            // Normal mode
-            if (!isFeaturedWebGame(game)) {
-                // Database game: fetch, inline resources, add base tag
-                fetch(bustUrl)
-                    .then(function(response) { return response.text(); })
-                    .then(function(text) {
-                        if (token !== featuredFrameLoadToken) return;
-                        return processDatabaseGameHtml(text, targetUrl);
-                    })
-                    .then(function(processedHtml) {
-                        if (token !== featuredFrameLoadToken) return;
-                        frameEl.removeAttribute('srcdoc');
-                        setFrameContent(frameEl, processedHtml);
-                        updateSimpleGameLinkBox(game, targetUrl);
-                        updateFeaturedFrameScrollMode();
-                    })
-                    .catch(function() {
-                        if (token !== featuredFrameLoadToken) return;
-                        // Fallback: try loading directly via iframe src
-                        frameEl.removeAttribute('srcdoc');
-                        frameEl.src = targetUrl || 'about:blank';
-                        updateSimpleGameLinkBox(game, targetUrl);
-                        updateFeaturedFrameScrollMode();
-                    });
-            } else {
-                // External web game: fetch + iframe wrapper fallback
-                fetch(bustUrl)
-                        .then(function(response) { return response.text(); })
-                        .then(function(text) {
-                            if (token !== featuredFrameLoadToken) return;
-                            frameEl.removeAttribute('srcdoc');
-                            setFrameContent(frameEl, text);
-                            updateSimpleGameLinkBox(game, targetUrl);
-                            updateFeaturedFrameScrollMode();
-                        })
-                        .catch(function() {
-                            if (token !== featuredFrameLoadToken) return;
-                            // Fallback: use iframe wrapper approach
-                            if (game.type === 'webnosandbox') {
-                                frameEl.src = targetUrl || 'about:blank';
-                            } else {
-                                frameEl.src = 'about:blank';
-                                frameEl.srcdoc = buildWebFeaturedSrcDoc(targetUrl || 'about:blank');
-                            }
-                            updateSimpleGameLinkBox(game, targetUrl);
-                            updateFeaturedFrameScrollMode();
-                        });
-            }
         }
     }
 
@@ -7046,18 +7099,27 @@ function launchSite(targetUrl, pageTitle, options) {
     win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center}</style></head><body><div style="color:#7da8c2;font-size:14px">Loading...</div></body></html>');
     win.document.close();
 
-    // Fetch the game content and write it directly
-    var bustUrl = normalizedUrl + (normalizedUrl.indexOf('?') !== -1 ? '&' : '?') + 't=' + Date.now();
-
-    fetch(bustUrl)
-        .then(function(response) { return response.text(); })
-        .then(function(text) {
-            // For database games (noIframe), use buildRunnableFetchedHtml for
-            // comprehensive processing: strips CSP, adds runtime guards, fixes
-            // undefined URLs, and injects a clean <base> tag.
-            if (options && options.noIframe) {
-                return buildRunnableFetchedHtml(text, normalizedUrl);
-            } else {
+    // Fetch the game content and write it directly.
+    // For database games, try multiple CDNs with XHR fallback + CORS proxy
+    // to work around school networks that strip CORS headers.
+    var fetchPromise;
+    if (options && options.noIframe) {
+        // Database game: use multi-CDN fallback.
+        // Extract the game ID from the URL since pageTitle may be a display name.
+        var gameId = pageTitle;
+        var idMatch = normalizedUrl.match(/\/([^\/]+)\.html/i);
+        if (idMatch) {
+            try { gameId = decodeURIComponent(idMatch[1]); } catch(e) { gameId = idMatch[1]; }
+        }
+        fetchPromise = fetchDatabaseGameHtml(gameId).then(function(result) {
+            return buildRunnableFetchedHtml(result.html, result.baseUrl);
+        });
+    } else {
+        // Web game: standard fetch
+        var bustUrl = normalizedUrl + (normalizedUrl.indexOf('?') !== -1 ? '&' : '?') + 't=' + Date.now();
+        fetchPromise = fetch(bustUrl)
+            .then(function(response) { return response.text(); })
+            .then(function(text) {
                 var inSchool2 = false;
                 try { inSchool2 = window.parent && window.parent.schoolMode; } catch(e) {}
                 if (inSchool2) {
@@ -7065,8 +7127,10 @@ function launchSite(targetUrl, pageTitle, options) {
                 } else {
                     return text;
                 }
-            }
-        })
+            });
+    }
+
+    fetchPromise
         .then(function(finalHtml) {
             // Primary: use blob URL — most reliable for rendering fetched
             // HTML in an about:blank window, especially from a null-origin
