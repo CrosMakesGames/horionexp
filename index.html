@@ -2397,27 +2397,34 @@ canvas {
     // to a CORS proxy. Returns a Promise that resolves to { html, baseUrl }.
     function fetchDatabaseGameHtml(gameId) {
         var fileName = encodeURIComponent(String(gameId || '').trim()) + '.html';
+        // Always use jsDelivr as the base URL for the <base> tag, even if the
+        // HTML was fetched from a different CDN.  <script>, <img>, <link> tags
+        // load cross-origin WITHOUT needing CORS headers (unlike fetch()), and
+        // jsDelivr serves correct MIME types (application/javascript, text/css).
+        // raw.githubusercontent.com serves .js as text/plain + nosniff, which
+        // blocks script execution.
+        var jsDelivrBase = DATABASE_GAME_CDN_URLS[0] + fileName;
 
-        // Try each CDN in order
+        // Try each CDN in order for the HTML fetch
         var cdnPromise = DATABASE_GAME_CDN_URLS.reduce(function(promise, baseUrl) {
             return promise.catch(function() {
                 var url = baseUrl + fileName;
                 return fetchWithFallback(url).then(function(html) {
-                    return { html: html, baseUrl: url };
+                    return { html: html, baseUrl: jsDelivrBase };
                 });
             });
         }, Promise.reject());
 
-        // Last resort: CORS proxy wrapping the first CDN URL
+        // Last resort: CORS proxy wrapping the jsDelivr URL
         return cdnPromise.catch(function() {
-            var proxyUrl = CORS_PROXY_URL + encodeURIComponent(DATABASE_GAME_CDN_URLS[0] + fileName);
+            var proxyUrl = CORS_PROXY_URL + encodeURIComponent(jsDelivrBase);
             return fetch(proxyUrl)
                 .then(function(res) {
                     if (!res.ok) throw new Error('Proxy HTTP ' + res.status);
                     return res.text();
                 })
                 .then(function(html) {
-                    return { html: html, baseUrl: DATABASE_GAME_CDN_URLS[0] + fileName };
+                    return { html: html, baseUrl: jsDelivrBase };
                 });
         });
     }
