@@ -507,7 +507,7 @@
 <body data-mode="games">
 <!--Remove this when adding to normal branch-->
 <!--Update for every small update-->
-<h3 style="position:fixed;top:0;left:0;z-index:2147483647;margin:0;padding:2px 8px;color:#fff;font-family:monospace;font-size:12px;pointer-events:none;background:transparent">Build#: 124</h3>
+<h3 style="position:fixed;top:0;left:0;z-index:2147483647;margin:0;padding:2px 8px;color:#fff;font-family:monospace;font-size:12px;pointer-events:none;background:transparent">Build#: 130</h3>
 
     <!-- SCHOOL MODE POPUP -->
     <div id="school-mode-popup" class="school-popup-overlay" style="display:none;">
@@ -2532,7 +2532,8 @@ canvas {
             // Collect all resources to fetch
             var tasks = [];
 
-            // Analytics/tracking domains — skip these entirely (remove the script)
+            // Ad/analytics/tracking domains — skip these entirely (remove the script)
+            // This prevents wasted time trying to fetch blocked ad scripts
             var ANALYTICS_DOMAINS = [
                 'googletagmanager.com', 'google-analytics.com',
                 'ssl.google-analytics.com', 'analytics.google.com',
@@ -2544,7 +2545,36 @@ canvas {
                 'ads.google.com', 'adservice.google.com',
                 'doubleclick.net', 'googlesyndication.com',
                 'googletagservices.com', 'adnxs.com', 'criteo.com',
-                'taboola.com', 'outbrain.com'
+                'taboola.com', 'outbrain.com',
+                // Ad networks
+                '2mdn.net', 's0.2mdn.net',
+                'imasdk.googleapis.com',
+                'api.adinplay.com', 'adinplay.com',
+                'btloader.com',
+                'cadmus.script.ac',
+                'onesignal.com',
+                'pubmatic.com', 'rubiconproject.com',
+                'openx.net', 'adform.net',
+                'smartadserver.com', 'contextweb.com',
+                'yieldmo.com', 'mediavine.com',
+                'adservice.google.co',
+                'googlesyndication.', 'googlesyndication.com',
+                'adroll.com', 'retargeter.com',
+                'appsflyer.com', 'branch.io',
+                'cdn.ampproject.org',
+                'www.google.com/jsapi',
+                'www.google.com/ads',
+                'pagead2.googlesyndication.com',
+                'tpc.googlesyndication.com',
+                'googleads.g.doubleclick.net',
+                'securepubads.g.doubleclick.net',
+                'adserver.yahoo.com',
+                'yieldlab.net',
+                'moatads.com', 'moatpixel.com',
+                'adsystem.com', 'advertising.com',
+                'spotxchange.com', 'spotx.tv',
+                'springserve.com',
+                'servetrackings.com'
             ];
             function isAnalyticsUrl(url) {
                 url = String(url || '').toLowerCase();
@@ -2646,6 +2676,9 @@ canvas {
                             newScript.setAttribute(attr.name, attr.value);
                         }
                     }
+                    if (t.url) {
+                        newScript.setAttribute('data-original-src', t.url);
+                    }
                     newScript.textContent = t.text;
                     if (t.element.parentNode) {
                         t.element.parentNode.replaceChild(newScript, t.element);
@@ -2690,25 +2723,66 @@ canvas {
                 // fetch first, falls back to CORS proxy on failure.
                 var overrideScript = doc.createElement('script');
                 overrideScript.textContent = '(function(){'
+                    // Patch document.baseURI to return the <base> tag's href
+                    // instead of about:srcdoc or blob: URL — needed for Unity games
+                    + 'try{var baseEl=document.querySelector("base[href]");if(baseEl){var correctBase=baseEl.getAttribute("href");Object.defineProperty(document,"baseURI",{get:function(){return correctBase;},configurable:true});try{Object.defineProperty(Document.prototype,"baseURI",{get:function(){return correctBase;},configurable:true});}catch(e2){}}}catch(e){}'
+                    + 'try{var _NURL=window.URL;if(!_NURL.__horionWrapped){var _gb=function(){try{var be=document.querySelector("base[href]");if(be)return be.getAttribute("href");}catch(e){}return null;};var _isa=function(u){u=String(u||"").toLowerCase();return u.indexOf("http://")===0||u.indexOf("https://")===0||u.indexOf("blob:")===0||u.indexOf("data:")===0||u.indexOf("about:")===0||u.indexOf("javascript:")===0||u.indexOf("mailto:")===0||u.indexOf("tel:")===0||u.indexOf("ftp://")===0||u.indexOf("ws://")===0||u.indexOf("wss://")===0;};var _WURL=function URL(u,b){if(b!==undefined&&b!==null){return new _NURL(u,b);}if(typeof u==="string"&&!_isa(u)){var cb=_gb();if(cb){try{return new _NURL(u,cb);}catch(e){}}}return new _NURL(u);};_WURL.prototype=_NURL.prototype;_WURL.createObjectURL=_NURL.createObjectURL;_WURL.revokeObjectURL=_NURL.revokeObjectURL;try{Object.defineProperty(_WURL,"__horionWrapped",{value:true});}catch(e){}window.URL=_WURL;}}catch(e){}'
+                    // Patch HTMLScriptElement.prototype.src getter to return data-original-src
+                    // for inlined scripts. Unity's loader uses document.currentScript.src to
+                    // determine its base URL — after inlining, native src is empty, so we
+                    // return the preserved data-original-src attribute instead.
+                    + 'try{var _csd=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,"src");if(_csd&&_csd.get){var _osg=_csd.get;Object.defineProperty(HTMLScriptElement.prototype,"src",{configurable:true,enumerable:true,get:function(){var ns=_osg.call(this);if(ns)return ns;try{var os=this.getAttribute("data-original-src");if(os)return os;}catch(e){}return ns;},set:_csd.set||function(){}});}}catch(e){}'
+                    // Patch XMLHttpRequest.open to resolve relative URLs against <base> tag.
+                    // Some Unity loaders use XHR instead of fetch for WASM/data files.
+                    + 'try{var _xo=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u,a,us,pw){if(typeof u==="string"&&u.indexOf("blob:")!==0&&u.indexOf("data:")!==0&&u.indexOf("http")!==0&&u.indexOf("//")!==0){try{var be=document.querySelector("base[href]");if(be){var bh=be.getAttribute("href");if(bh)u=new _NURL(u,bh).href;}}catch(e){}}return _xo.call(this,m,u,a!==false,us,pw);};}catch(e){}'
                     + 'var O=window.fetch;'
                     + 'var proxies=["https://api.allorigins.win/raw?url=","https://corsproxy.io/?","https://api.codetabs.com/v1/proxy/?quest="];'
-                    + 'var ads=["googletagmanager.com","google-analytics.com","ssl.google-analytics.com","analytics.google.com","connect.facebook.net","bat.bing.com","scorecardresearch.com","quantserve.com","hotjar.com","doubleclick.net","googlesyndication.com","clarity.ms","tagmanager.google.com","ads.google.com","adservice.google.com"];'
+                    + 'var ads=["googletagmanager.com","google-analytics.com","ssl.google-analytics.com","analytics.google.com","connect.facebook.net","bat.bing.com","scorecardresearch.com","quantserve.com","hotjar.com","doubleclick.net","googlesyndication.com","clarity.ms","tagmanager.google.com","ads.google.com","adservice.google.com","2mdn.net","imasdk.googleapis.com","api.adinplay.com","adinplay.com","btloader.com","cadmus.script.ac","onesignal.com","pubmatic.com","rubiconproject.com","openx.net","adform.net","smartadserver.com","yieldmo.com","mediavine.com","pagead2.googlesyndication.com","tpc.googlesyndication.com","googleads.g.doubleclick.net","securepubads.g.doubleclick.net","adroll.com","appsflyer.com","moatads.com","adsystem.com","advertising.com","spotxchange.com","springserve.com","servetrackings.com","googlesyndication.","adsbygoogle","jsapi","yieldlab.net","contextweb.com","retargeter.com","branch.io","cdn.ampproject.org","adserver.yahoo.com","spotx.tv"];'
                     + 'function isAd(u){u=String(u||"").toLowerCase();for(var i=0;i<ads.length;i++){if(u.indexOf(ads[i])!==-1)return true;}return false;}'
+                    + 'function isWasm(u){return String(u||"").toLowerCase().indexOf(".wasm")!==-1;}'
+                    + 'function fixWasmResp(resp,u){if(isWasm(u)&&resp.ok){return resp.arrayBuffer().then(function(buf){return new Response(buf,{headers:{"Content-Type":"application/wasm"}});});}return resp;}'
                     + 'window.fetch=function(i,o){'
                     + 'var u=typeof i==="string"?i:(i&&i.url)||"";'
                     + 'if(!u||u.indexOf("blob:")===0||u.indexOf("data:")===0)return O.call(window,i,o);'
                     + 'if(isAd(u))return new Promise(function(res,rej){rej(new Error("blocked"));});'
-                    + 'return O.call(window,i,o)["catch"](function(e){'
+                    + 'if(typeof i==="string"){try{var _ru=new URL(u,document.baseURI).href;var _po=location.origin||"";var _so=new URL(_ru).origin;if(_po&&_so&&_po!==_so){if(!o)o={};if(o.mode!=="cors"&&o.mode!=="navigate")o.mode="cors";}}catch(e){}}'
+                    + 'return O.call(window,i,o).then(function(r){return fixWasmResp(r,u);})["catch"](function(e){'
                     + 'try{u=new URL(u,document.baseURI).href}catch(x){}'
                     + 'if(isAd(u))return new Promise(function(res,rej){rej(new Error("blocked"));});'
                     + 'var p=Promise.reject();'
-                    + 'proxies.forEach(function(px){p=p["catch"](function(){return O.call(window,px+encodeURIComponent(u),o);});});'
+                    + 'proxies.forEach(function(px){p=p["catch"](function(){return O.call(window,px+encodeURIComponent(u),o).then(function(r){return fixWasmResp(r,u);});});});'
                     + 'return p;'
                     + '});};'
+                    // Mock common ad APIs so games skip ads immediately
+                    + 'window.adsbygoogle=window.adsbygoogle||[];'
+                    + 'window.googletag=window.googletag||{cmd:[],enableServices:function(){},display:function(){},defineSlot:function(){return{addService:function(){return this;},setTargeting:function(){return this;}};}};'
+                    + 'if(!window.google)window.google={};'
+                    + 'if(!window.google.ima)window.google.ima={};'
+                    + 'var imaMock={AdDisplayContainer:function(){return{initialize:function(){},showAd:function(){},hide:function(){}};},AdsManager:function(){return{init:function(){},start:function(){},addEventListener:function(){},removeEventListener:function(){},destroy:function(){},resize:function(){}};},AdsLoader:function(){return{addEventListener:function(){},removeEventListener:function(){},requestAds:function(){}};},AdsRequest:function(){},AdsRenderingSettings:function(){},AdErrorEvent:function(){},AdEvent:function(){},AdError:function(){}};'
+                    + 'Object.keys(imaMock).forEach(function(k){window.google.ima[k]=imaMock[k];});'
+                    + 'window.google.ima.ViewMode={NORMAL:"normal",FULLSCREEN:"fullscreen"};'
+                    + 'window.google.ima.AdEvent={Type:{LOADED:"loaded",COMPLETE:"complete",STARTED:"started",SKIPPABLE_STATE_CHANGED:"skippable_state_changed",CONTENT_PAUSE_REQUESTED:"content_pause_requested",CONTENT_RESUME_REQUESTED:"content_resume_requested"}};'
+                    + 'window.OneSignal=window.OneSignal||{push:function(){},init:function(){return Promise.resolve();},on:function(){},off:function(){},once:function(){}};'
+                    + 'window.aiptag=window.aiptag||{cmd:{push:function(fn){try{fn();}catch(e){}}},showAd:function(){}};'
+                    + 'window.adinplay=window.adinplay||{com:function(){return{initAd:function(){},showAd:function(){}};}};'
+                    // Override WebAssembly.instantiateStreaming
+                    + 'if(window.WebAssembly&&WebAssembly.instantiateStreaming){'
+                    + 'var origWasm=WebAssembly.instantiateStreaming.bind(WebAssembly);'
+                    + 'WebAssembly.instantiateStreaming=function(source,importObject){'
+                    + 'return origWasm(source,importObject)["catch"](function(err){'
+                    + 'if(source&&typeof source.arrayBuffer==="function"){'
+                    + 'return source.arrayBuffer().then(function(buf){return WebAssembly.instantiate(buf,importObject);});'
+                    + '}'
+                    + 'throw err;'
+                    + '});};'
+                    + '}'
                     // Strip crossorigin from dynamically created scripts via MutationObserver
-                    + 'var stripCO=function(s){if(s&&s.tagName==="SCRIPT"&&s.hasAttribute&&s.hasAttribute("crossorigin")){s.removeAttribute("crossorigin");}if(s&&s.hasAttribute&&s.hasAttribute("integrity")){s.removeAttribute("integrity");}};'
+                    + 'var stripCO=function(s){if(s&&s.tagName==="SCRIPT"&&s.hasAttribute&&s.hasAttribute("crossorigin")){var src=s.getAttribute("src");if(!src||src.indexOf("data:")===0||src.indexOf("blob:")===0){s.removeAttribute("crossorigin");}}if(s&&s.hasAttribute&&s.hasAttribute("integrity")){s.removeAttribute("integrity");}};'
                     + 'document.querySelectorAll("script").forEach(stripCO);'
                     + 'if(window.MutationObserver){new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){stripCO(n);if(n.querySelectorAll){n.querySelectorAll("script").forEach(stripCO);}});});}).observe(document.documentElement||document,{childList:true,subtree:true});}'
+                    // Intercept dynamically created script elements with ad URLs and block them
+                    + 'var origCreate=document.createElement.bind(document);'
+                    + 'document.createElement=function(tag){var el=origCreate(tag);if(tag&&tag.toLowerCase()==="script"){var origSetAttr=el.setAttribute.bind(el);var addCO=function(v){if(typeof v==="string"&&v.indexOf("data:")!==0&&v.indexOf("blob:")!==0&&v.indexOf("about:")!==0&&v.indexOf("javascript:")!==0){try{origSetAttr("crossorigin","anonymous");}catch(e){}}};el.setAttribute=function(name,value){origSetAttr(name,value);if(name==="src"&&isAd(value)){el.removeAttribute("src");return;}if(name==="src"&&!isAd(value)){addCO(value);}};var origSrcDesc=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,"src");if(origSrcDesc&&origSrcDesc.set){Object.defineProperty(el,"src",{get:function(){return origSrcDesc.get.call(this);},set:function(v){if(isAd(v)){return;}addCO(v);origSrcDesc.set.call(this,v);},configurable:true});}}return el;};'
                     + '})();';
                 if (doc.head) {
                     doc.head.insertBefore(overrideScript, doc.head.firstChild);
@@ -6380,29 +6454,23 @@ canvas {
     let featuredGameBlobUrl = '';
 
     function setFrameContent(frameEl, htmlContent) {
-        // Use blob URL for large content (Safari has ~2MB srcdoc limit).
-        // Fall back to srcdoc for small content (faster, no cleanup needed).
-        var contentSize = (htmlContent || '').length;
-        // Clean up any previous blob URL
+        // Always use blob URL — srcdoc context (about:srcdoc) breaks URL resolution
+        // for Unity/WASM games because about:srcdoc is not a valid base URL.
+        // Blob URL context works correctly with <base> tag + URL constructor patches.
         if (featuredGameBlobUrl) {
             try { URL.revokeObjectURL(featuredGameBlobUrl); } catch (err) {}
             featuredGameBlobUrl = '';
         }
-        if (contentSize > 500000) {
-            // Large content: use blob URL (no size limit, works on all browsers)
-            try {
-                var blob = new Blob([htmlContent], { type: 'text/html' });
-                featuredGameBlobUrl = URL.createObjectURL(blob);
-                frameEl.removeAttribute('srcdoc');
-                frameEl.src = featuredGameBlobUrl;
-                return;
-            } catch (e) {
-                // If blob creation fails, fall back to srcdoc
-            }
+        try {
+            var blob = new Blob([htmlContent || ''], { type: 'text/html' });
+            featuredGameBlobUrl = URL.createObjectURL(blob);
+            frameEl.removeAttribute('srcdoc');
+            frameEl.src = featuredGameBlobUrl;
+        } catch (e) {
+            // Fallback: srcdoc only if blob creation fails
+            frameEl.removeAttribute('src');
+            frameEl.srcdoc = htmlContent || '';
         }
-        // Small content: use srcdoc directly
-        frameEl.removeAttribute('src');
-        frameEl.srcdoc = htmlContent;
     }
 
     const FEATURED_FRAME_DEFAULT_SANDBOX = 'allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-downloads';
@@ -6618,11 +6686,11 @@ canvas {
         frameEl.srcdoc = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>html,body{margin:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center}</style></head><body><div style="font-size:14px;color:#7da8c2">Loading...</div></body></html>';
 
         if (!isFeaturedWebGame(game)) {
-            // Database game: use multi-CDN fallback with XHR + CORS proxy
+            // Database game: use multi-CDN fallback, same pipeline as launchSite
             fetchDatabaseGameHtml(game.filename)
                 .then(function(result) {
                     if (token !== featuredFrameLoadToken) return;
-                    return processDatabaseGameHtml(result.html, result.baseUrl);
+                    return buildRunnableFetchedHtml(result.html, result.baseUrl);
                 })
                 .then(function(processedHtml) {
                     if (token !== featuredFrameLoadToken) return;
@@ -6640,14 +6708,21 @@ canvas {
                     updateFeaturedFrameScrollMode();
                 });
         } else {
-            // External web game: standard fetch
+            // External web game: same pipeline as database games
             var bustUrl = targetUrl + (targetUrl.indexOf('?') !== -1 ? '&' : '?') + 't=' + Date.now();
             fetch(bustUrl)
                 .then(function(response) { return response.text(); })
                 .then(function(text) {
                     if (token !== featuredFrameLoadToken) return;
+                    // Same processing as database games: resource inlining + runtime guards
+                    return inlineGameResources(text, targetUrl).then(function(inlined) {
+                        return buildRunnableFetchedHtml(inlined, targetUrl);
+                    });
+                })
+                .then(function(processedHtml) {
+                    if (token !== featuredFrameLoadToken) return;
                     frameEl.removeAttribute('srcdoc');
-                    setFrameContent(frameEl, text);
+                    setFrameContent(frameEl, processedHtml);
                     updateSimpleGameLinkBox(game, targetUrl);
                     updateFeaturedFrameScrollMode();
                 })
@@ -7359,6 +7434,16 @@ if(window.HTMLScriptElement) patchUrlProperty(HTMLScriptElement.prototype,'src')
 if(window.HTMLIFrameElement) patchUrlProperty(HTMLIFrameElement.prototype,'src');
 if(window.HTMLLinkElement) patchUrlProperty(HTMLLinkElement.prototype,'href');
 if(window.HTMLAnchorElement) patchUrlProperty(HTMLAnchorElement.prototype,'href');
+
+// Patch document.baseURI (own property + prototype) for Unity WASM games
+try{var _bEl=document.querySelector("base[href]");if(_bEl){var _cBase=_bEl.getAttribute("href");Object.defineProperty(document,"baseURI",{get:function(){return _cBase;},configurable:true});try{Object.defineProperty(Document.prototype,"baseURI",{get:function(){return _cBase;},configurable:true});}catch(e2){}}}catch(e){}
+// Wrap URL constructor — new URL("relativePath") uses internal base URL (blob:/about:srcdoc),
+// NOT the patched document.baseURI JS property. Must intercept the constructor itself.
+try{var _NURL2=window.URL;if(!_NURL2.__horionWrapped){var _gb2=function(){try{var be=document.querySelector("base[href]");if(be)return be.getAttribute("href");}catch(e){}return null;};var _isa2=function(u){u=String(u||"").toLowerCase();return u.indexOf("http://")===0||u.indexOf("https://")===0||u.indexOf("blob:")===0||u.indexOf("data:")===0||u.indexOf("about:")===0||u.indexOf("javascript:")===0||u.indexOf("mailto:")===0||u.indexOf("tel:")===0||u.indexOf("ftp://")===0||u.indexOf("ws://")===0||u.indexOf("wss://")===0;};var _WURL2=function URL(u,b){if(b!==undefined&&b!==null){return new _NURL2(u,b);}if(typeof u==="string"&&!_isa2(u)){var cb=_gb2();if(cb){try{return new _NURL2(u,cb);}catch(e){}}}return new _NURL2(u);};_WURL2.prototype=_NURL2.prototype;_WURL2.createObjectURL=_NURL2.createObjectURL;_WURL2.revokeObjectURL=_NURL2.revokeObjectURL;try{Object.defineProperty(_WURL2,"__horionWrapped",{value:true});}catch(e){}window.URL=_WURL2;}}catch(e){}
+// Patch script.src getter for inlined scripts (data-original-src fallback)
+try{var _csd2=Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype,"src");if(_csd2&&_csd2.get){var _osg2=_csd2.get;Object.defineProperty(HTMLScriptElement.prototype,"src",{configurable:true,enumerable:true,get:function(){var ns=_osg2.call(this);if(ns)return ns;try{var os=this.getAttribute("data-original-src");if(os)return os;}catch(e){}return ns;},set:_csd2.set||function(){}});}}catch(e){}
+// Patch XMLHttpRequest.open to resolve relative URLs against <base> tag
+try{var _xo2=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u,a,us,pw){if(typeof u==="string"&&u.indexOf("blob:")!==0&&u.indexOf("data:")!==0&&u.indexOf("http")!==0&&u.indexOf("//")!==0){try{var be=document.querySelector("base[href]");if(be){var bh=be.getAttribute("href");if(bh)u=new _NURL2(u,bh).href;}}catch(e){}}return _xo2.call(this,m,u,a!==false,us,pw);};}catch(e){}
 })();<\/script>`;
 
         let sanitizedHtml = rawHtml
@@ -7457,18 +7542,16 @@ function launchSite(targetUrl, pageTitle, options) {
             return buildRunnableFetchedHtml(result.html, result.baseUrl);
         });
     } else {
-        // Web game: standard fetch
+        // Web game: standard fetch + same processing as database games
+        // (resource inlining + runtime guards + fetch override)
         var bustUrl = normalizedUrl + (normalizedUrl.indexOf('?') !== -1 ? '&' : '?') + 't=' + Date.now();
         fetchPromise = fetch(bustUrl)
             .then(function(response) { return response.text(); })
             .then(function(text) {
-                var inSchool2 = false;
-                try { inSchool2 = window.parent && window.parent.schoolMode; } catch(e) {}
-                if (inSchool2) {
-                    return rewriteRelativeUrls(text, normalizedUrl);
-                } else {
-                    return text;
-                }
+                // Same pipeline for both school and non-school mode
+                return inlineGameResources(text, normalizedUrl).then(function(inlined) {
+                    return buildRunnableFetchedHtml(inlined, normalizedUrl);
+                });
             });
     }
 
