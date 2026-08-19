@@ -7052,11 +7052,11 @@ function launchSite(targetUrl, pageTitle, options) {
     fetch(bustUrl)
         .then(function(response) { return response.text(); })
         .then(function(text) {
-            // For database games (noIframe) and school mode web games,
-            // inject a base tag so relative URLs resolve to the CDN.
-            // jsDelivr has proper CORS headers, so scripts load directly.
+            // For database games (noIframe), use buildRunnableFetchedHtml for
+            // comprehensive processing: strips CSP, adds runtime guards, fixes
+            // undefined URLs, and injects a clean <base> tag.
             if (options && options.noIframe) {
-                return rewriteRelativeUrls(text, normalizedUrl);
+                return buildRunnableFetchedHtml(text, normalizedUrl);
             } else {
                 var inSchool2 = false;
                 try { inSchool2 = window.parent && window.parent.schoolMode; } catch(e) {}
@@ -7068,44 +7068,43 @@ function launchSite(targetUrl, pageTitle, options) {
             }
         })
         .then(function(finalHtml) {
+            // Primary: use blob URL — most reliable for rendering fetched
+            // HTML in an about:blank window, especially from a null-origin
+            // (srcdoc) context where document.write can be restricted.
             try {
-                win.document.open();
-                win.document.write(finalHtml);
-                win.document.close();
+                var blob = new Blob([finalHtml], { type: 'text/html' });
+                var blobUrl = URL.createObjectURL(blob);
+                win.location.href = blobUrl;
             } catch (e) {
-                // If document.write fails (e.g. restricted about:blank),
-                // fall back to blob URL
+                // Fallback: document.write
                 try {
-                    var blob = new Blob([finalHtml], { type: 'text/html' });
-                    var blobUrl = URL.createObjectURL(blob);
-                    win.location.href = blobUrl;
+                    win.document.open();
+                    win.document.write(finalHtml);
+                    win.document.close();
                 } catch (e2) {
-                    // Last resort: redirect to the original URL
-                    win.location.href = normalizedUrl;
+                    // If both blob URL and document.write fail, show an error.
+                    // Do NOT redirect to the CDN URL — it serves text/plain
+                    // with nosniff, so the browser would show raw code.
+                    win.document.open();
+                    win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center}</style></head><body><div><h2 style="color:#ff6b6b;margin:0 0 8px">Failed to load game</h2><p style="color:#888;margin:0">Please try again.</p></div></body></html>');
+                    win.document.close();
                 }
             }
         })
         .catch(function() {
-            if (options && options.noIframe) {
-                // Database game: redirect to original URL as fallback
-                win.location.href = normalizedUrl;
-            } else {
-                // Check school mode for web games
-                var inSchool = false;
-                try { inSchool = window.parent && window.parent.schoolMode; } catch(e) {}
-                if (inSchool) {
-                    // School mode: CORS blocked, no iframe
-                    win.document.open();
-                    win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center}</style></head><body><div><h2 style="color:#ff6b6b;margin:0 0 8px">Blocked by CORS</h2><p style="color:#888;margin:0">Contact site admin.</p></div></body></html>');
-                    win.document.close();
-                } else {
-                    // Normal mode: iframe fallback
-                    var safeUrl = normalizedUrl.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
-                    var sandboxAttr = ' sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-presentation allow-popups allow-popups-to-escape-sandbox allow-downloads"';
-                    win.document.open();
-                    win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block;background:#000}</style></head><body><iframe src="' + safeUrl + '"' + sandboxAttr + ' allow="fullscreen *; display-capture *; gamepad *; picture-in-picture *; screen-wake-lock *" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><script>(function(){window.alert=function(){};window.confirm=function(){return false;};window.prompt=function(){return null;};})();<\/script></body></html>');
-                    win.document.close();
-                }
+            // Fetch failed (e.g. CORS or network error).
+            // No iframes — show an error in the about:blank window.
+            var inSchool = false;
+            try { inSchool = window.parent && window.parent.schoolMode; } catch(e) {}
+            var errMsg = inSchool
+                ? '<h2 style="color:#ff6b6b;margin:0 0 8px">Blocked by CORS</h2><p style="color:#888;margin:0">Contact site admin.</p>'
+                : '<h2 style="color:#ff6b6b;margin:0 0 8px">Failed to load game</h2><p style="color:#888;margin:0">Please try again.</p>';
+            try {
+                win.document.open();
+                win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + safeTitle + '</title><style>html,body{margin:0;padding:0;width:100%;height:100%;background:#000;color:#fff;font-family:Inter,sans-serif;display:flex;align-items:center;justify-content:center;text-align:center}</style></head><body><div>' + errMsg + '</div></body></html>');
+                win.document.close();
+            } catch (e) {
+                // Window might be closed
             }
         });
 
