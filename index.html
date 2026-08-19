@@ -507,7 +507,7 @@
 <body data-mode="games">
 <!--Remove this when adding to normal branch-->
 <!--Update for every small update-->
-<h3 style="position:fixed;top:0;left:0;z-index:2147483647;margin:0;padding:2px 8px;color:#fff;font-family:monospace;font-size:12px;pointer-events:none;background:transparent">Build#: 121</h3>
+<h3 style="position:fixed;top:0;left:0;z-index:2147483647;margin:0;padding:2px 8px;color:#fff;font-family:monospace;font-size:12px;pointer-events:none;background:transparent">Build#: 124</h3>
 
     <!-- SCHOOL MODE POPUP -->
     <div id="school-mode-popup" class="school-popup-overlay" style="display:none;">
@@ -2397,10 +2397,48 @@ canvas {
     // RESOURCE INLINING SYSTEM
     // Fetches all scripts, stylesheets, and images from the game HTML and
     // inlines them directly so the game boots without external requests.
-    // Uses direct fetch() with CORS proxy fallback for each resource.
+    // Uses multi-CDN mirror fallback + CORS proxy for each resource.
     // ====================================================================
 
-    // Fetch a resource as text with timeout + CORS proxy fallback.
+    // Generate CDN mirror URLs for a GitHub-hosted resource.
+    // jsDelivr, raw.githubusercontent, and statically.io all serve the same
+    // files — if one is blocked at school, the others may work.
+    function generateCdnMirrors(url) {
+        var mirrors = [url];
+        // jsDelivr: https://cdn.jsdelivr.net/gh/USER/REPO@REF/PATH
+        var m = url.match(/^https?:\/\/cdn\.jsdelivr\.net\/gh\/([^/]+)\/([^/@]+)@([^/]+)\/(.*)$/);
+        if (m) {
+            mirrors.push('https://raw.githubusercontent.com/' + m[1] + '/' + m[2] + '/' + m[3] + '/' + m[4]);
+            mirrors.push('https://cdn.statically.io/gh/' + m[1] + '/' + m[2] + '@' + m[3] + '/' + m[4]);
+        }
+        // raw.githubusercontent: https://raw.githubusercontent.com/USER/REPO/REF/PATH
+        m = url.match(/^https?:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.*)$/);
+        if (m) {
+            mirrors.push('https://cdn.jsdelivr.net/gh/' + m[1] + '/' + m[2] + '@' + m[3] + '/' + m[4]);
+            mirrors.push('https://cdn.statically.io/gh/' + m[1] + '/' + m[2] + '@' + m[3] + '/' + m[4]);
+        }
+        // statically.io: https://cdn.statically.io/gh/USER/REPO@REF/PATH
+        m = url.match(/^https?:\/\/cdn\.statically\.io\/gh\/([^/]+)\/([^/@]+)@([^/]+)\/(.*)$/);
+        if (m) {
+            mirrors.push('https://cdn.jsdelivr.net/gh/' + m[1] + '/' + m[2] + '@' + m[3] + '/' + m[4]);
+            mirrors.push('https://raw.githubusercontent.com/' + m[1] + '/' + m[2] + '/' + m[3] + '/' + m[4]);
+        }
+        // Deduplicate
+        var seen = {};
+        return mirrors.filter(function(u) {
+            if (seen[u]) return false;
+            seen[u] = true; return true;
+        });
+    }
+
+    // Multiple CORS proxies to try if all CDNs fail
+    var RESOURCE_CORS_PROXIES = [
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.io/?',
+        'https://api.codetabs.com/v1/proxy/?quest='
+    ];
+
+    // Fetch a resource as text with multi-CDN + multi-proxy fallback.
     function fetchResourceText(url, timeoutMs) {
         timeoutMs = timeoutMs || 12000;
         function tryFetch(targetUrl) {
@@ -2421,12 +2459,19 @@ canvas {
                 });
             });
         }
-        return tryFetch(url).catch(function() {
-            return tryFetch(CORS_PROXY_URL + encodeURIComponent(url));
+        // Try each CDN mirror, then each CORS proxy
+        var mirrors = generateCdnMirrors(url);
+        var promise = Promise.reject();
+        mirrors.forEach(function(mirror) {
+            promise = promise.catch(function() { return tryFetch(mirror); });
         });
+        RESOURCE_CORS_PROXIES.forEach(function(proxy) {
+            promise = promise.catch(function() { return tryFetch(proxy + encodeURIComponent(url)); });
+        });
+        return promise;
     }
 
-    // Fetch a resource as blob with timeout + CORS proxy fallback.
+    // Fetch a resource as blob with multi-CDN + multi-proxy fallback.
     function fetchResourceBlob(url, timeoutMs) {
         timeoutMs = timeoutMs || 8000;
         function tryFetch(targetUrl) {
@@ -2447,9 +2492,15 @@ canvas {
                 });
             });
         }
-        return tryFetch(url).catch(function() {
-            return tryFetch(CORS_PROXY_URL + encodeURIComponent(url));
-        }).catch(function() { return null; });
+        var mirrors = generateCdnMirrors(url);
+        var promise = Promise.reject();
+        mirrors.forEach(function(mirror) {
+            promise = promise.catch(function() { return tryFetch(mirror); });
+        });
+        RESOURCE_CORS_PROXIES.forEach(function(proxy) {
+            promise = promise.catch(function() { return tryFetch(proxy + encodeURIComponent(url)); });
+        });
+        return promise.catch(function() { return null; });
     }
 
     // Inline all static resources (scripts, CSS, images) in the game HTML.
@@ -2481,11 +2532,78 @@ canvas {
             // Collect all resources to fetch
             var tasks = [];
 
-            // Scripts with src
+            // Analytics/tracking domains — skip these entirely (remove the script)
+            var ANALYTICS_DOMAINS = [
+                'googletagmanager.com', 'google-analytics.com',
+                'ssl.google-analytics.com', 'analytics.google.com',
+                'connect.facebook.net', 'www.facebook.com/tr',
+                'bat.bing.com', 'scorecardresearch.com',
+                'quantserve.com', 'hotjar.com', 'mixpanel.com',
+                'segment.com', 'amplitude.com', 'clarity.ms',
+                'www.clarity.ms', 'tagmanager.google.com',
+                'ads.google.com', 'adservice.google.com',
+                'doubleclick.net', 'googlesyndication.com',
+                'googletagservices.com', 'adnxs.com', 'criteo.com',
+                'taboola.com', 'outbrain.com'
+            ];
+            function isAnalyticsUrl(url) {
+                url = String(url || '').toLowerCase();
+                for (var i = 0; i < ANALYTICS_DOMAINS.length; i++) {
+                    if (url.indexOf(ANALYTICS_DOMAINS[i]) !== -1) return true;
+                }
+                return false;
+            }
+
+            // Also strip crossorigin from ALL scripts to prevent data: URI CORS errors
+            var allScripts = Array.prototype.slice.call(doc.querySelectorAll('script'));
+            allScripts.forEach(function(el) {
+                if (el.hasAttribute('crossorigin')) el.removeAttribute('crossorigin');
+                if (el.hasAttribute('integrity')) el.removeAttribute('integrity');
+            });
+
+            // Scripts with src (including data: URIs)
             var scripts = Array.prototype.slice.call(doc.querySelectorAll('script[src]'));
             scripts.forEach(function(el) {
-                var absUrl = resolveUrl(el.getAttribute('src'));
-                if (absUrl) tasks.push({ type: 'script', element: el, url: absUrl });
+                var src = el.getAttribute('src');
+                // Skip analytics/tracking scripts — just remove them
+                if (src && isAnalyticsUrl(src)) {
+                    if (el.parentNode) el.parentNode.removeChild(el);
+                    return;
+                }
+                // Handle data: URI scripts — decode and inline as text to
+                // avoid CORS errors (browsers block data: URIs with crossorigin)
+                if (src && src.indexOf('data:text/javascript') === 0) {
+                    try {
+                        var commaIdx = src.indexOf(',');
+                        var meta = src.substring(5, commaIdx); // after 'data:'
+                        var data = src.substring(commaIdx + 1);
+                        var decoded;
+                        if (meta.indexOf('base64') !== -1) {
+                            decoded = atob(data);
+                        } else {
+                            decoded = decodeURIComponent(data);
+                        }
+                        var newScript = doc.createElement('script');
+                        for (var i = 0; i < el.attributes.length; i++) {
+                            var attr = el.attributes[i];
+                            var lname = attr.name.toLowerCase();
+                            if (lname !== 'src' && lname !== 'integrity' && lname !== 'crossorigin') {
+                                newScript.setAttribute(attr.name, attr.value);
+                            }
+                        }
+                        newScript.textContent = decoded;
+                        if (el.parentNode) el.parentNode.replaceChild(newScript, el);
+                    } catch(e) { /* leave as-is on decode error */ }
+                    return;
+                }
+                var absUrl = resolveUrl(src);
+                if (absUrl) {
+                    if (isAnalyticsUrl(absUrl)) {
+                        if (el.parentNode) el.parentNode.removeChild(el);
+                        return;
+                    }
+                    tasks.push({ type: 'script', element: el, url: absUrl });
+                }
             });
 
             // Stylesheets
@@ -2573,13 +2691,24 @@ canvas {
                 var overrideScript = doc.createElement('script');
                 overrideScript.textContent = '(function(){'
                     + 'var O=window.fetch;'
+                    + 'var proxies=["https://api.allorigins.win/raw?url=","https://corsproxy.io/?","https://api.codetabs.com/v1/proxy/?quest="];'
+                    + 'var ads=["googletagmanager.com","google-analytics.com","ssl.google-analytics.com","analytics.google.com","connect.facebook.net","bat.bing.com","scorecardresearch.com","quantserve.com","hotjar.com","doubleclick.net","googlesyndication.com","clarity.ms","tagmanager.google.com","ads.google.com","adservice.google.com"];'
+                    + 'function isAd(u){u=String(u||"").toLowerCase();for(var i=0;i<ads.length;i++){if(u.indexOf(ads[i])!==-1)return true;}return false;}'
                     + 'window.fetch=function(i,o){'
-                    + 'return O.call(window,i,o)["catch"](function(e){'
                     + 'var u=typeof i==="string"?i:(i&&i.url)||"";'
-                    + 'if(!u||u.indexOf("blob:")===0||u.indexOf("data:")===0)throw e;'
+                    + 'if(!u||u.indexOf("blob:")===0||u.indexOf("data:")===0)return O.call(window,i,o);'
+                    + 'if(isAd(u))return new Promise(function(res,rej){rej(new Error("blocked"));});'
+                    + 'return O.call(window,i,o)["catch"](function(e){'
                     + 'try{u=new URL(u,document.baseURI).href}catch(x){}'
-                    + 'return O.call(window,"https://api.allorigins.win/raw?url="+encodeURIComponent(u),o);'
+                    + 'if(isAd(u))return new Promise(function(res,rej){rej(new Error("blocked"));});'
+                    + 'var p=Promise.reject();'
+                    + 'proxies.forEach(function(px){p=p["catch"](function(){return O.call(window,px+encodeURIComponent(u),o);});});'
+                    + 'return p;'
                     + '});};'
+                    // Strip crossorigin from dynamically created scripts via MutationObserver
+                    + 'var stripCO=function(s){if(s&&s.tagName==="SCRIPT"&&s.hasAttribute&&s.hasAttribute("crossorigin")){s.removeAttribute("crossorigin");}if(s&&s.hasAttribute&&s.hasAttribute("integrity")){s.removeAttribute("integrity");}};'
+                    + 'document.querySelectorAll("script").forEach(stripCO);'
+                    + 'if(window.MutationObserver){new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){stripCO(n);if(n.querySelectorAll){n.querySelectorAll("script").forEach(stripCO);}});});}).observe(document.documentElement||document,{childList:true,subtree:true});}'
                     + '})();';
                 if (doc.head) {
                     doc.head.insertBefore(overrideScript, doc.head.firstChild);
