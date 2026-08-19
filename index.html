@@ -507,7 +507,7 @@
 <body data-mode="games">
 <!--Remove this when adding to normal branch-->
 <!--Update for every small update-->
-<h3 style="position:fixed;top:0;left:0;z-index:2147483647;margin:0;padding:2px 8px;color:#fff;font-family:monospace;font-size:12px;pointer-events:none;background:transparent">Build#: 120</h3>
+<h3 style="position:fixed;top:0;left:0;z-index:2147483647;margin:0;padding:2px 8px;color:#fff;font-family:monospace;font-size:12px;pointer-events:none;background:transparent">Build#: 121</h3>
 
     <!-- SCHOOL MODE POPUP -->
     <div id="school-mode-popup" class="school-popup-overlay" style="display:none;">
@@ -2393,16 +2393,213 @@ canvas {
             });
     }
 
+    // ====================================================================
+    // RESOURCE INLINING SYSTEM
+    // Fetches all scripts, stylesheets, and images from the game HTML and
+    // inlines them directly so the game boots without external requests.
+    // Uses direct fetch() with CORS proxy fallback for each resource.
+    // ====================================================================
+
+    // Fetch a resource as text with timeout + CORS proxy fallback.
+    function fetchResourceText(url, timeoutMs) {
+        timeoutMs = timeoutMs || 12000;
+        function tryFetch(targetUrl) {
+            return new Promise(function(resolve, reject) {
+                var done = false;
+                var timer = setTimeout(function() {
+                    if (!done) { done = true; reject(new Error('timeout')); }
+                }, timeoutMs);
+                fetch(targetUrl).then(function(res) {
+                    if (done) return;
+                    if (!res.ok) { done = true; reject(new Error('HTTP ' + res.status)); return; }
+                    return res.text();
+                }).then(function(text) {
+                    if (done) return;
+                    done = true; clearTimeout(timer); resolve(text);
+                }).catch(function(err) {
+                    if (!done) { done = true; clearTimeout(timer); reject(err); }
+                });
+            });
+        }
+        return tryFetch(url).catch(function() {
+            return tryFetch(CORS_PROXY_URL + encodeURIComponent(url));
+        });
+    }
+
+    // Fetch a resource as blob with timeout + CORS proxy fallback.
+    function fetchResourceBlob(url, timeoutMs) {
+        timeoutMs = timeoutMs || 8000;
+        function tryFetch(targetUrl) {
+            return new Promise(function(resolve, reject) {
+                var done = false;
+                var timer = setTimeout(function() {
+                    if (!done) { done = true; reject(new Error('timeout')); }
+                }, timeoutMs);
+                fetch(targetUrl).then(function(res) {
+                    if (done) return;
+                    if (!res.ok) { done = true; reject(new Error('HTTP ' + res.status)); return; }
+                    return res.blob();
+                }).then(function(blob) {
+                    if (done) return;
+                    done = true; clearTimeout(timer); resolve(blob);
+                }).catch(function(err) {
+                    if (!done) { done = true; clearTimeout(timer); reject(err); }
+                });
+            });
+        }
+        return tryFetch(url).catch(function() {
+            return tryFetch(CORS_PROXY_URL + encodeURIComponent(url));
+        }).catch(function() { return null; });
+    }
+
+    // Inline all static resources (scripts, CSS, images) in the game HTML.
+    // Returns a Promise that resolves to the self-contained HTML string.
+    function inlineGameResources(htmlText, baseUrl) {
+        try {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(htmlText, 'text/html');
+
+            // Get base URL for resolving relative URLs
+            var baseEl = doc.querySelector('base[href]');
+            var baseHref = baseEl ? baseEl.getAttribute('href') : baseUrl;
+
+            function resolveUrl(url) {
+                if (!url) return null;
+                url = String(url).trim();
+                if (!url || url.indexOf('data:') === 0 || url.indexOf('blob:') === 0 ||
+                    url.indexOf('javascript:') === 0 || url.indexOf('#') === 0 ||
+                    url.indexOf('mailto:') === 0 || url.indexOf('tel:') === 0) {
+                    return null;
+                }
+                try { return new URL(url, baseHref).href; }
+                catch(e) {
+                    try { return new URL(url, baseUrl).href; }
+                    catch(e2) { return null; }
+                }
+            }
+
+            // Collect all resources to fetch
+            var tasks = [];
+
+            // Scripts with src
+            var scripts = Array.prototype.slice.call(doc.querySelectorAll('script[src]'));
+            scripts.forEach(function(el) {
+                var absUrl = resolveUrl(el.getAttribute('src'));
+                if (absUrl) tasks.push({ type: 'script', element: el, url: absUrl });
+            });
+
+            // Stylesheets
+            var links = Array.prototype.slice.call(doc.querySelectorAll('link[rel~="stylesheet"]'));
+            links.forEach(function(el) {
+                var absUrl = resolveUrl(el.getAttribute('href'));
+                if (absUrl) tasks.push({ type: 'css', element: el, url: absUrl });
+            });
+
+            // Images (best effort)
+            var imgs = Array.prototype.slice.call(doc.querySelectorAll('img[src]'));
+            imgs.forEach(function(el) {
+                var absUrl = resolveUrl(el.getAttribute('src'));
+                if (absUrl) tasks.push({ type: 'image', element: el, url: absUrl });
+            });
+
+            // Fetch all resources in parallel
+            var fetchPromises = tasks.map(function(task) {
+                if (task.type === 'image') {
+                    return fetchResourceBlob(task.url, 8000).then(function(blob) {
+                        task.blob = blob;
+                    }).catch(function() { task.blob = null; });
+                } else {
+                    return fetchResourceText(task.url, 12000).then(function(text) {
+                        task.text = text;
+                    }).catch(function() { task.text = null; });
+                }
+            });
+
+            return Promise.all(fetchPromises).then(function() {
+                // Replace scripts with inline code
+                tasks.filter(function(t) { return t.type === 'script' && t.text !== null; }).forEach(function(t) {
+                    var newScript = doc.createElement('script');
+                    for (var i = 0; i < t.element.attributes.length; i++) {
+                        var attr = t.element.attributes[i];
+                        var lname = attr.name.toLowerCase();
+                        // Skip src (we're inlining), and integrity/crossorigin
+                        // (they'd break for inlined scripts)
+                        if (lname !== 'src' && lname !== 'integrity' && lname !== 'crossorigin') {
+                            newScript.setAttribute(attr.name, attr.value);
+                        }
+                    }
+                    newScript.textContent = t.text;
+                    if (t.element.parentNode) {
+                        t.element.parentNode.replaceChild(newScript, t.element);
+                    }
+                });
+
+                // Replace stylesheets with inline styles
+                tasks.filter(function(t) { return t.type === 'css' && t.text !== null; }).forEach(function(t) {
+                    var cssText = t.text;
+                    // Resolve url() references in CSS to absolute URLs
+                    cssText = cssText.replace(/url\((['"]?)([^'")]+)\1\)/gi, function(match, quote, urlPath) {
+                        if (urlPath.indexOf('data:') === 0 || urlPath.indexOf('blob:') === 0) return match;
+                        try {
+                            var absUrl = new URL(urlPath, t.url).href;
+                            return 'url(' + absUrl + ')';
+                        } catch(e) { return match; }
+                    });
+                    // Resolve @import in CSS
+                    cssText = cssText.replace(/@import\s+(?:url\()?(['"]?)([^'")]+)\1\)?\s*;/gi, function(match, quote, urlPath) {
+                        if (urlPath.indexOf('data:') === 0 || urlPath.indexOf('blob:') === 0) return match;
+                        try {
+                            var absUrl = new URL(urlPath, t.url).href;
+                            return '@import url(' + absUrl + ');';
+                        } catch(e) { return match; }
+                    });
+                    var style = doc.createElement('style');
+                    style.textContent = cssText;
+                    if (t.element.parentNode) {
+                        t.element.parentNode.replaceChild(style, t.element);
+                    }
+                });
+
+                // Replace images with blob URLs
+                tasks.filter(function(t) { return t.type === 'image' && t.blob !== null; }).forEach(function(t) {
+                    try {
+                        var blobUrl = URL.createObjectURL(t.blob);
+                        t.element.setAttribute('src', blobUrl);
+                    } catch(e) {}
+                });
+
+                // Inject fetch() override for dynamic requests — tries direct
+                // fetch first, falls back to CORS proxy on failure.
+                var overrideScript = doc.createElement('script');
+                overrideScript.textContent = '(function(){'
+                    + 'var O=window.fetch;'
+                    + 'window.fetch=function(i,o){'
+                    + 'return O.call(window,i,o)["catch"](function(e){'
+                    + 'var u=typeof i==="string"?i:(i&&i.url)||"";'
+                    + 'if(!u||u.indexOf("blob:")===0||u.indexOf("data:")===0)throw e;'
+                    + 'try{u=new URL(u,document.baseURI).href}catch(x){}'
+                    + 'return O.call(window,"https://api.allorigins.win/raw?url="+encodeURIComponent(u),o);'
+                    + '});};'
+                    + '})();';
+                if (doc.head) {
+                    doc.head.insertBefore(overrideScript, doc.head.firstChild);
+                }
+
+                // Serialize back to HTML
+                return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+            });
+        } catch(e) {
+            // If anything goes wrong, return the original HTML
+            return Promise.resolve(htmlText);
+        }
+    }
+
     // Fetch a database game's HTML, trying multiple CDNs and falling back
-    // to a CORS proxy. Returns a Promise that resolves to { html, baseUrl }.
+    // to a CORS proxy. Then inlines all resources (scripts, CSS, images) so
+    // the game can boot without external requests.
+    // Returns a Promise that resolves to { html, baseUrl }.
     function fetchDatabaseGameHtml(gameId) {
         var fileName = encodeURIComponent(String(gameId || '').trim()) + '.html';
-        // Always use jsDelivr as the base URL for the <base> tag, even if the
-        // HTML was fetched from a different CDN.  <script>, <img>, <link> tags
-        // load cross-origin WITHOUT needing CORS headers (unlike fetch()), and
-        // jsDelivr serves correct MIME types (application/javascript, text/css).
-        // raw.githubusercontent.com serves .js as text/plain + nosniff, which
-        // blocks script execution.
         var jsDelivrBase = DATABASE_GAME_CDN_URLS[0] + fileName;
 
         // Try each CDN in order for the HTML fetch
@@ -2426,6 +2623,12 @@ canvas {
                 .then(function(html) {
                     return { html: html, baseUrl: jsDelivrBase };
                 });
+        }).then(function(result) {
+            // Inline all resources (scripts, CSS, images) so the game
+            // boots without any external network requests
+            return inlineGameResources(result.html, result.baseUrl).then(function(inlined) {
+                return { html: inlined, baseUrl: result.baseUrl };
+            });
         });
     }
     const PORTAL_DOC_URL = 'https://bit.ly/horiongames';
